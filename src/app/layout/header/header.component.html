@@ -1,19 +1,21 @@
-<div class="hi"> Header works! </div>
 <header class="site-header">
   <div class="header-inner">
-    <a class="brand" routerLink="/" aria-label="Home">
-      <img class="brand-logo" src="assets/icons/favicon.png" alt="Logo" />
+    <a class="logo-link" routerLink="/" aria-label="Home">
+      <img class="logo-img" src="assets/icons/favicon.png" alt="Logo" />
     </a>
 
     <nav class="nav" aria-label="Primary navigation">
       <a class="nav-link" routerLink="/" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">
         How to Order <!-- PRODUCTS --> 
+        <img src="assets/images/green-star.png" alt="Green star" class="nav-img">
       </a>
       <a class="nav-link" routerLink="/past-work" routerLinkActive="is-active">
         Portfolio
+        <img src="assets/images/blue-star.png" alt="Blue star" class="nav-img">
       </a>
       <a class="nav-link" routerLink="/work" routerLinkActive="is-active">
         About Me
+        <img src="assets/images/pink-star.png" alt="Pink star" class="nav-img">
       </a>
     </nav>
   </div>

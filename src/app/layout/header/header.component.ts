@@ -1,13 +1,21 @@
-import { Component, signal, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-header',
+  standalone: true,
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss'],
-  imports: [RouterModule, CommonModule]
+  styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
- 
+  menuOpen = false;
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMenu(): void {
+    this.menuOpen = false;
+  }
 }

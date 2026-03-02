@@ -1,0 +1,83 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.how-to-order-body {
+  width: 100%;
+  background: #7B906C;
+}
+.how-to-order-body .how-to-order-content {
+  width: 100%;
+  padding: 1.5rem 1.75rem 3rem;
+  box-sizing: border-box;
+}
+.how-to-order-body .how-to-order-content .category-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin: 0 auto;
+  gap: 2rem;
+  width: 100%;
+}
+.how-to-order-body .how-to-order-content .category-grid .category-card {
+  position: relative;
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  overflow: hidden;
+  cursor: pointer;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+}
+.how-to-order-body .how-to-order-content .category-grid .category-card .category-card-image {
+  display: block;
+  width: 100%;
+  height: 25vh;
+  aspect-ratio: 1/1;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.how-to-order-body .how-to-order-content .category-grid .category-card .category-card-shadow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 38%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 45%, rgba(0, 0, 0, 0) 100%);
+  pointer-events: none;
+}
+.how-to-order-body .how-to-order-content .category-grid .category-card .category-card-title {
+  position: absolute;
+  left: 24px;
+  right: 16px;
+  bottom: 24px;
+  margin: 0;
+  z-index: 1;
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-align: left;
+  color: white;
+}
+
+@media screen and (min-width: 1024px) {
+  .how-to-order-body .how-to-order-content {
+    padding: 2.5rem 3rem 4rem;
+  }
+  .how-to-order-body .how-to-order-content .category-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3rem;
+  }
+  .how-to-order-body .how-to-order-content .category-grid .category-card .category-card-image {
+    height: 40vh;
+  }
+  .how-to-order-body .how-to-order-content .category-grid .category-card .category-card-title {
+    left: 32px;
+    right: 20px;
+    bottom: 24px;
+    font-size: 1.75rem;
+  }
+}/*# sourceMappingURL=how-to-order.component.css.map */

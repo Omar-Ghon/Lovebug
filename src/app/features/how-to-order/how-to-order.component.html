@@ -1,0 +1,17 @@
+<main class="how-to-order-body">
+  <section class="how-to-order-content">
+    <div class="category-grid">
+      @for (category of categories; track category.title) {
+        <button class="category-card" type="button">
+          <img
+            class="category-card-image"
+            [src]="category.image"
+            [alt]="category.title"
+          />
+          <div class="category-card-shadow"></div>
+          <p class="category-card-title">{{ category.title }}</p>
+        </button>
+      }
+    </div>
+  </section>
+</main>

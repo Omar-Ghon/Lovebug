@@ -11,7 +11,7 @@
   overflow: hidden;
   background: #452F21;
 }
-.home-body .home-bg-desktop {
+.home-body .home-bg-pattern {
   display: none;
 }
 .home-body .home-bg-mobile {
@@ -31,24 +31,28 @@
 }
 
 @media screen and (min-width: 1024px) {
-  .home-body {
-    background: transparent;
-  }
-  .home-body .home-bg-desktop {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-    -o-object-fit: fill;
-       object-fit: fill;
-    -o-object-position: center;
-       object-position: center;
-    z-index: 0;
-    pointer-events: none;
-  }
   .home-body .home-bg-mobile {
     display: none;
+  }
+  .home-body .home-bg-pattern {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 10%;
+    display: block;
+    z-index: 0;
+    pointer-events: none;
+    background-repeat: repeat-y;
+    background-position: top center;
+    background-size: 100% auto;
+  }
+  .home-body .home-bg-pattern-left {
+    left: 0;
+    background-image: url("/assets/images/home-bg-pattern-left.png");
+  }
+  .home-body .home-bg-pattern-right {
+    right: 0;
+    background-image: url("/assets/images/home-bg-pattern-right.png");
   }
   .home-body .home-content {
     position: relative;

@@ -1,4 +1,4 @@
-@use "../../../../../styles" as *;
+@use "../../../styles" as *;
 
 .home-body {
   position: relative;
@@ -7,7 +7,7 @@
   overflow: hidden;
   background: $dark-coffee;
 
-  .home-bg-desktop {
+  .home-bg-pattern {
     display: none;
   }
 
@@ -31,22 +31,32 @@
 
 @media screen and (min-width: 1024px) {
   .home-body {
-    background: transparent;
-
-    .home-bg-desktop {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: fill;
-      object-position: center;
-      z-index: 0;
-      pointer-events: none;
-    }
 
     .home-bg-mobile {
       display: none;
+    }
+
+    .home-bg-pattern {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 10%;
+      display: block;
+      z-index: 0;
+      pointer-events: none;
+      background-repeat: repeat-y;
+      background-position: top center;
+      background-size: 100% auto;
+    }
+
+    .home-bg-pattern-left {
+      left: 0;
+      background-image: url("/assets/images/home-bg-pattern-left.png");
+    }
+
+    .home-bg-pattern-right {
+      right: 0;
+      background-image: url("/assets/images/home-bg-pattern-right.png");
     }
 
     .home-content {

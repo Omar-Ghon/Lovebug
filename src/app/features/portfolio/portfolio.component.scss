@@ -1,0 +1,9 @@
+@use "../../../styles" as *;
+
+.portfolio-body {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background: $blue;
+}

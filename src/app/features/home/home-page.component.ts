@@ -1,7 +1,7 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { HeaderComponent } from '../../../../layout/header/header.component';
+import { HeaderComponent } from '../../layout/header/header.component';
 
 @Component({
   selector: 'app-home',

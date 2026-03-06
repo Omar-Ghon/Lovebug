@@ -1,0 +1,96 @@
+<main class="order-category-page-body">
+  <section class="order-category-page-content">
+    <a class="back-link" routerLink="/how-to-order">← Back to categories</a>
+
+    @if (category(); as categoryItem) {
+      <div class="category-page-layout">
+        <div class="category-page-image-wrap">
+          <img
+            class="category-page-image"
+            [src]="categoryItem.image"
+            [alt]="categoryItem.title"
+          />
+        </div>
+
+        <div class="category-page-info">
+          <h1 class="category-page-title">{{ categoryItem.title }}</h1>
+
+          <p class="category-page-description">
+            {{ categoryItem.description }}
+          </p>
+
+          <form class="category-form">
+            @for (question of categoryItem.questions; track question.key) {
+              <div class="form-field">
+                <label class="form-label" [for]="question.key">
+                  {{ question.label }}
+                </label>
+
+                @switch (question.type) {
+                  @case ('text') {
+                    <input
+                      class="form-input"
+                      [id]="question.key"
+                      type="text"
+                      [required]="question.required ?? false"
+                      [placeholder]="question.placeholder ?? ''"
+                    />
+                  }
+
+                  @case ('number') {
+                    <input
+                      class="form-input"
+                      [id]="question.key"
+                      type="number"
+                      [required]="question.required ?? false"
+                      [placeholder]="question.placeholder ?? ''"
+                    />
+                  }
+
+                  @case ('textarea') {
+                    <textarea
+                      class="form-textarea"
+                      [id]="question.key"
+                      [required]="question.required ?? false"
+                      [placeholder]="question.placeholder ?? ''"
+                    ></textarea>
+                  }
+
+                  @case ('select') {
+                    <select
+                      class="form-select"
+                      [id]="question.key"
+                      [required]="question.required ?? false"
+                    >
+                      <option value="" selected disabled>Select an option</option>
+
+                      @for (option of question.options ?? []; track option.value) {
+                        <option [value]="option.value">
+                          {{ option.label }}
+                        </option>
+                      }
+                    </select>
+                  }
+                }
+              </div>
+            }
+
+            <button class="submit-button" type="submit">
+              Submit Request
+            </button>
+          </form>
+        </div>
+      </div>
+    } @else {
+      <div class="not-found-state">
+        <h1 class="not-found-title">Category not found</h1>
+        <p class="not-found-text">
+          The product category you selected does not exist.
+        </p>
+        <a class="not-found-link" routerLink="/how-to-order">
+          Return to categories
+        </a>
+      </div>
+    }
+  </section>
+</main>

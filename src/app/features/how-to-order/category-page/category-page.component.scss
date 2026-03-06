@@ -1,0 +1,200 @@
+@use "../../../../styles" as *;
+
+.order-category-page-body {
+  width: 100%;
+  min-height: 100vh;
+  background: $green;
+
+  .order-category-page-content {
+    width: 100%;
+    padding: 1.5rem 1.75rem 3rem;
+    box-sizing: border-box;
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      text-decoration: none;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .category-page-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+
+      .category-page-image-wrap {
+        width: 100%;
+        border-radius: 0.75rem;
+        overflow: hidden;
+
+        .category-page-image {
+          display: block;
+          width: 100%;
+          height: 38vh;
+          object-fit: cover;
+        }
+      }
+
+      .category-page-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+
+        .category-page-title {
+          margin: 0;
+          font-size: 2rem;
+          font-weight: 700;
+          color: white;
+        }
+
+        .category-page-description {
+          margin: 0;
+          font-size: 1rem;
+          line-height: 1.7;
+          color: white;
+        }
+
+        .category-form {
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+          margin-top: 0.5rem;
+
+          .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+
+            .form-label {
+              font-size: 1rem;
+              font-weight: 600;
+              color: white;
+            }
+
+            .form-input,
+            .form-textarea,
+            .form-select {
+              width: 100%;
+              border: 0;
+              border-radius: 0.5rem;
+              padding: 0.95rem 1rem;
+              box-sizing: border-box;
+              font: inherit;
+              color: #1d1d1d;
+              background: white;
+            }
+
+            .form-textarea {
+              min-height: 140px;
+              resize: vertical;
+            }
+
+            .form-select {
+              appearance: none;
+            }
+          }
+
+          .submit-button {
+            width: 100%;
+            border: 0;
+            border-radius: 999px;
+            padding: 1rem 1.25rem;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            background: white;
+            color: $green;
+          }
+        }
+      }
+    }
+
+    .not-found-state {
+      padding: 3rem 0;
+      text-align: center;
+
+      .not-found-title {
+        margin: 0 0 1rem;
+        font-size: 2rem;
+        color: white;
+      }
+
+      .not-found-text {
+        margin: 0 0 1.5rem;
+        color: white;
+        line-height: 1.6;
+      }
+
+      .not-found-link {
+        color: white;
+        font-weight: 700;
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .order-category-page-body {
+    .order-category-page-content {
+      padding: 2.5rem 3rem 4rem;
+
+      .back-link {
+        margin-bottom: 2rem;
+        font-size: 1.05rem;
+      }
+
+      .category-page-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+        align-items: start;
+        gap: 4rem;
+
+        .category-page-image-wrap {
+          .category-page-image {
+            height: 70vh;
+            max-height: 760px;
+          }
+        }
+
+        .category-page-info {
+          .category-page-title {
+            font-size: 3rem;
+          }
+
+          .category-page-description {
+            font-size: 1.1rem;
+          }
+
+          .category-form {
+            gap: 1.5rem;
+
+            .form-field {
+              .form-label {
+                font-size: 1.05rem;
+              }
+
+              .form-input,
+              .form-textarea,
+              .form-select {
+                padding: 1rem 1.1rem;
+              }
+
+              .form-textarea {
+                min-height: 160px;
+              }
+            }
+
+            .submit-button {
+              width: fit-content;
+              min-width: 220px;
+              padding: 1rem 1.75rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}

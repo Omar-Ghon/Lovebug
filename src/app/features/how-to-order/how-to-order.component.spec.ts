@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HowToOrderComponent } from './how-to-order.component';
+import { HowToOrderPageComponent } from './how-to-order.component';
 
-describe('HowToOrderComponent', () => {
-  let component: HowToOrderComponent;
-  let fixture: ComponentFixture<HowToOrderComponent>;
+describe('HowToOrderPageComponent', () => {
+  let component: HowToOrderPageComponent;
+  let fixture: ComponentFixture<HowToOrderPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [HowToOrderComponent],
+      declarations: [HowToOrderPageComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(HowToOrderComponent);
+    fixture = TestBed.createComponent(HowToOrderPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

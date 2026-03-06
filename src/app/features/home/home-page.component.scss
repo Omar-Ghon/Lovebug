@@ -26,6 +26,15 @@
     position: relative;
     z-index: 1;
     width: 100%;
+
+    .comingSoon {
+      color: $lemon;
+      display: grid;
+      place-content: center;
+      height: 70vh;
+      font-size: 6rem;
+      font-family: "Italianno", cursive;
+    }
   }
 }
 
@@ -63,6 +72,11 @@
       position: relative;
       z-index: 1;
       width: 100%;
+
+      .comingSoon {
+        font-size: 16rem;
+        height: 80vh;
+      }
     }
   }
 }

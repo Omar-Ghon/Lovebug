@@ -1,13 +1,21 @@
 <main class="how-to-order-body">
   <section class="how-to-order-content">
-    <div class="category-grid">
-      @for (category of categories; track category.slug) {
-        <app-category-card
-          [title]="category.title"
-          [image]="category.image"
-          [slug]="category.slug"
-        />
-      }
-    </div>
+    @if (isLoading) {
+      <p class="how-to-order-status">Loading categories...</p>
+    } @else if (errorMessage) {
+      <p class="how-to-order-status how-to-order-status--error">
+        {{ errorMessage }}
+      </p>
+    } @else {
+      <div class="category-grid">
+        @for (category of categories; track $index) {
+          <app-category-card
+            [title]="category.title"
+            [image]="category.image"
+            [slug]="category.slug"
+          />
+        }
+      </div>
+    }
   </section>
 </main>

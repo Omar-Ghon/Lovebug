@@ -5,8 +5,10 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:vercel": "npm run sync:lovebug-content && ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "sync:lovebug-content": "node scripts/sync-lovebug-content.mjs"
   },
   "prettier": {
     "overrides": [

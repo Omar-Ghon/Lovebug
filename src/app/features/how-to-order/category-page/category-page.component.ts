@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 
-import { ORDER_CATEGORIES } from '../data/order-categories.data';
+import { HowToOrderService } from '../services/how-to-order.service';
 import { OrderCategory } from '../models/order-categories.model';
 
 @Component({
@@ -16,13 +16,26 @@ import { OrderCategory } from '../models/order-categories.model';
 })
 export class CategoryPageComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly howToOrderService = inject(HowToOrderService);
 
   private readonly slug = toSignal(
     this.route.paramMap.pipe(map((params) => params.get('slug') ?? '')),
     { initialValue: '' }
   );
 
-  protected readonly category = computed<OrderCategory | undefined>(() =>
-    ORDER_CATEGORIES.find((item) => item.slug === this.slug())
+  private readonly categories = toSignal(
+    this.howToOrderService.getCategories(),
+    { initialValue: [] as OrderCategory[] }
   );
+
+  private readonly loading = toSignal(
+    this.howToOrderService.getLoading(),
+    { initialValue: true }
+  );
+
+  protected readonly category = computed<OrderCategory | undefined>(() =>
+    this.categories().find((item) => item.slug === this.slug())
+  );
+
+  protected readonly isLoading = computed(() => this.loading());
 }

@@ -2,7 +2,11 @@
   <section class="order-category-page-content">
     <a class="back-link" routerLink="/how-to-order">← Back to categories</a>
 
-    @if (category(); as categoryItem) {
+    @if (isLoading()) {
+      <div class="loading-state">
+        <p class="loading-text">Loading category...</p>
+      </div>
+    } @else if (category(); as categoryItem) {
       <div class="category-page-layout">
         <div class="category-page-image-wrap">
           <img

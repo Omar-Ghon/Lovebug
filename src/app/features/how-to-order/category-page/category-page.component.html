@@ -23,64 +23,214 @@
             {{ categoryItem.description }}
           </p>
 
-          <form class="category-form">
-            @for (question of categoryItem.questions; track question.key) {
+          <form class="category-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="form-section">
+              <h2 class="form-section-title">General Information</h2>
+
               <div class="form-field">
-                <label class="form-label" [for]="question.key">
-                  {{ question.label }}
+                <label class="form-label" for="fullName">Full Name</label>
+                <input
+                  class="form-input"
+                  id="fullName"
+                  type="text"
+                  formControlName="fullName"
+                  placeholder="Your full name"
+                />
+              </div>
+
+              <div class="form-field">
+                <label class="form-label" for="instagramUsername">
+                  Instagram Username
                 </label>
+                <input
+                  class="form-input"
+                  id="instagramUsername"
+                  type="text"
+                  formControlName="instagramUsername"
+                  placeholder="@username"
+                />
+              </div>
 
-                @switch (question.type) {
-                  @case ('text') {
-                    <input
-                      class="form-input"
-                      [id]="question.key"
-                      type="text"
-                      [required]="question.required ?? false"
-                      [placeholder]="question.placeholder ?? ''"
-                    />
+              <div class="form-field">
+                <label class="form-label" for="emailAddress">Email Address</label>
+                <input
+                  class="form-input"
+                  id="emailAddress"
+                  type="email"
+                  formControlName="emailAddress"
+                  placeholder="you@example.com"
+                />
+              </div>
+
+              <div class="form-field">
+                <label class="form-label" for="shippingAddress">
+                  Shipping Address
+                </label>
+                <textarea
+                  class="form-textarea"
+                  id="shippingAddress"
+                  formControlName="shippingAddress"
+                  placeholder="Enter your full shipping address"
+                ></textarea>
+              </div>
+
+              <div class="form-field">
+                <label class="form-label">Is this a gift?</label>
+                <select class="form-select" formControlName="isGift">
+                  <option [ngValue]="null" disabled>Select an option</option>
+                  <option [ngValue]="true">Yes</option>
+                  <option [ngValue]="false">No</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label class="form-label" for="preferredCompletionDate">
+                  Preferred completion date
+                </label>
+                <input
+                  class="form-input"
+                  id="preferredCompletionDate"
+                  type="date"
+                  formControlName="preferredCompletionDate"
+                />
+              </div>
+
+              <div class="form-field">
+                <label class="form-label">
+                  Is this a priority/rush order? (Rush fees apply)
+                </label>
+                <select class="form-select" formControlName="isRushOrder">
+                  <option [ngValue]="null" disabled>Select an option</option>
+                  <option [ngValue]="true">Yes</option>
+                  <option [ngValue]="false">No</option>
+                </select>
+              </div>
+
+              <div class="form-field">
+                <label class="form-label" for="budgetRange">
+                  Budget range (if applicable)
+                </label>
+                <input
+                  class="form-input"
+                  id="budgetRange"
+                  type="text"
+                  formControlName="budgetRange"
+                  placeholder="e.g. $40-$60"
+                />
+              </div>
+
+              <div class="form-field">
+                <label class="form-label" for="referenceImages">
+                  Reference images (paste links for now)
+                </label>
+                <textarea
+                  class="form-textarea"
+                  id="referenceImages"
+                  formControlName="referenceImages"
+                  placeholder="Paste Pinterest, Instagram, Drive, or other links"
+                ></textarea>
+              </div>
+
+              <div class="form-field">
+                <label class="form-label" for="allergies">
+                  Fiber allergies or sensitivities?
+                </label>
+                <input
+                  class="form-input"
+                  id="allergies"
+                  type="text"
+                  formControlName="allergies"
+                  placeholder="Optional"
+                />
+              </div>
+
+              <div class="form-field checkbox-field">
+                <label class="checkbox-label">
+                  <input type="checkbox" formControlName="agreementYes" />
+                  <span>
+                    I understand custom items are non-refundable once production
+                    begins.
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-section" formGroupName="answers">
+              <h2 class="form-section-title">Category Details</h2>
+
+              @for (question of categoryItem.questions; track question.key) {
+                <div class="form-field">
+                  <label class="form-label" [for]="question.key">
+                    {{ question.label }}
+                  </label>
+
+                  @switch (question.type) {
+                    @case ('text') {
+                      <input
+                        class="form-input"
+                        [id]="question.key"
+                        type="text"
+                        [formControlName]="question.key"
+                        [placeholder]="question.placeholder ?? ''"
+                      />
+                    }
+
+                    @case ('number') {
+                      <input
+                        class="form-input"
+                        [id]="question.key"
+                        type="number"
+                        [formControlName]="question.key"
+                        [placeholder]="question.placeholder ?? ''"
+                      />
+                    }
+
+                    @case ('textarea') {
+                      <textarea
+                        class="form-textarea"
+                        [id]="question.key"
+                        [formControlName]="question.key"
+                        [placeholder]="question.placeholder ?? ''"
+                      ></textarea>
+                    }
+
+                    @case ('select') {
+                      <select
+                        class="form-select"
+                        [id]="question.key"
+                        [formControlName]="question.key"
+                      >
+                        <option value="" disabled>Select an option</option>
+
+                        @for (option of question.options ?? []; track option.value) {
+                          <option [value]="option.value">
+                            {{ option.label }}
+                          </option>
+                        }
+                      </select>
+                    }
                   }
+                </div>
+              }
+            </div>
 
-                  @case ('number') {
-                    <input
-                      class="form-input"
-                      [id]="question.key"
-                      type="number"
-                      [required]="question.required ?? false"
-                      [placeholder]="question.placeholder ?? ''"
-                    />
-                  }
+            @if (submitError) {
+              <div class="form-message error-message">
+                {{ submitError }}
+              </div>
+            }
 
-                  @case ('textarea') {
-                    <textarea
-                      class="form-textarea"
-                      [id]="question.key"
-                      [required]="question.required ?? false"
-                      [placeholder]="question.placeholder ?? ''"
-                    ></textarea>
-                  }
-
-                  @case ('select') {
-                    <select
-                      class="form-select"
-                      [id]="question.key"
-                      [required]="question.required ?? false"
-                    >
-                      <option value="" selected disabled>Select an option</option>
-
-                      @for (option of question.options ?? []; track option.value) {
-                        <option [value]="option.value">
-                          {{ option.label }}
-                        </option>
-                      }
-                    </select>
-                  }
+            @if (submitSuccess) {
+              <div class="form-message success-message">
+                {{ submitSuccess }}
+                @if (submittedOrderId) {
+                  <span> Your order ID is {{ submittedOrderId }}.</span>
                 }
               </div>
             }
 
-            <button class="submit-button" type="submit">
-              Submit Request
+            <button class="submit-button" type="submit" [disabled]="isSubmitting">
+              {{ isSubmitting ? 'Submitting...' : 'Submit Request' }}
             </button>
           </form>
         </div>

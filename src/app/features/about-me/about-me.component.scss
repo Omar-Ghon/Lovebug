@@ -1,9 +1,80 @@
 @use "../../../styles" as *;
 
+@font-face {
+  font-family: "Migaela";
+  src: url("../../../assets/fonts/Migaela-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 .about-me-body {
   position: relative;
   min-height: 100vh;
   width: 100%;
   overflow: hidden;
   background: $pink;
+
+  .about-me-content {
+      .about-me-title {
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: center;
+
+        .about-me-image-wrapper {
+          margin: 1rem 1rem 1rem;
+          .about-me-image {
+            width: 100%;
+          }
+        }
+
+        .about-me-text {
+          font-family: "Migaela", serif;
+          font-size: 3.5rem;
+          text-align: center;
+          color: $dark-coffee;
+        }
+      }
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .about-me-body {
+    .about-me-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 4rem 0;
+
+      .about-me-title {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+
+        .about-me-text {
+          font-family: "Migaela", serif;
+          font-size: 6rem;
+          color: $dark-coffee;
+          text-align: right;
+          margin-top: 5rem;
+          flex: 0 0 44%;
+          line-height: 0.95;
+        }
+
+        .about-me-image-wrapper {
+          flex: 0 0 56%;
+          display: flex;
+          justify-content: flex-end;
+          padding-right: 2rem;
+
+          .about-me-image {
+            width: 100%;
+            max-width: 420px;
+            height: auto;
+            display: block;
+          }
+        }
+      }
+    }
+  }
 }

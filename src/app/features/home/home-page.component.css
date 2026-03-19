@@ -29,6 +29,35 @@
   z-index: 1;
   width: 100%;
 }
+.home-body .home-content .homeBg {
+  width: 100%;
+  display: block;
+}
+.home-body .home-content .home-overlay-text {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  text-align: center;
+  color: white;
+  width: 80%;
+}
+.home-body .home-content .home-overlay-text h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+.home-body .home-content .home-overlay-text p {
+  font-size: 1.25rem;
+}
+.home-body .home-content .comingSoon {
+  color: #FFF8BD;
+  display: grid;
+  place-content: center;
+  height: 70vh;
+  font-size: 6rem;
+  font-family: "Italianno", cursive;
+}
 
 @media screen and (min-width: 1024px) {
   .home-body .home-bg-mobile {
@@ -57,6 +86,10 @@
   .home-body .home-content {
     position: relative;
     z-index: 1;
+    width: 100%;
+    text-align: center;
+  }
+  .home-body .home-content .homeBg {
     width: 100%;
   }
 }/*# sourceMappingURL=home-page.component.css.map */

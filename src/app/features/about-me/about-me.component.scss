@@ -16,6 +16,8 @@
   background: $pink;
 
   .about-me-content {
+    padding-bottom: 3rem;
+
       .about-me-title {
         display: flex;
         flex-direction: column-reverse;
@@ -29,10 +31,47 @@
         }
 
         .about-me-text {
-          font-family: "Migaela", serif;
-          font-size: 3.5rem;
           text-align: center;
           color: $dark-coffee;
+          padding: 0 1rem;
+
+          .about-me-heading {
+            font-family: "Migaela", serif;
+            font-size: 3.5rem;
+            font-weight: 550;
+          }
+
+          .about-me-paragraph {
+            font-size: 1.25rem;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+          }
+
+          .social-media-links {
+            display: flex;
+            justify-content: space-around;
+            align-content: center;
+            gap: 0.5rem;
+
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            margin-top: 2rem;
+            
+            .social-media {
+              display: flex;
+              align-items: center;
+              gap: 0.1rem;
+
+              img {
+                height: 2rem;
+                width: 2rem;
+              }
+
+              .social-media-text {
+                font-size: 1rem;
+                font-weight: 700;
+              }
+            }
+            
+          }
         }
       }
   }
@@ -43,26 +82,56 @@
     .about-me-content {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 2rem 4rem 0;
+      padding: 2rem 4rem 5rem;
 
       .about-me-title {
         display: flex;
         flex-direction: row;
         align-items: flex-start;
-        justify-content: space-between;
+        margin: 0 0 0 5rem;
+        gap: 5rem;
 
         .about-me-text {
           font-family: "Migaela", serif;
-          font-size: 6rem;
           color: $dark-coffee;
-          text-align: right;
-          margin-top: 5rem;
-          flex: 0 0 44%;
-          line-height: 0.95;
+          text-align: center;
+          margin-top: 1.5rem;
+          flex: 0 0 55%;
+
+          .about-me-heading {
+            font-size: 6rem;
+          }
+
+          .about-me-paragraph {
+            font-size: 1.5rem;
+            max-width: 50vw;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            overflow-wrap: break-word;
+            word-break: normal;
+          }
+
+          .social-media-links {
+            display: flex;
+            justify-content: space-around;
+            
+            .social-media {
+              gap: 0.25rem;
+
+              img {
+                height: 2.5rem;
+                width: 2.5rem;
+              }
+
+              .social-media-text {
+                font-size: 1.1rem;
+              }
+            }
+            
+          }
         }
 
         .about-me-image-wrapper {
-          flex: 0 0 56%;
+          flex: 0 0 45%;
           display: flex;
           justify-content: flex-end;
           padding-right: 2rem;

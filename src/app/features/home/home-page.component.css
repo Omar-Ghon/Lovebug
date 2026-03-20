@@ -4,25 +4,19 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: "Migaela";
+  src: url("../../../assets/fonts/Migaela-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 .home-body {
   position: relative;
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
   overflow: hidden;
   background: #452F21;
-}
-.home-body .home-bg-pattern {
-  display: none;
-}
-.home-body .home-bg-mobile {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: auto;
-  display: block;
-  z-index: 0;
-  pointer-events: none;
 }
 .home-body .home-content {
   position: relative;
@@ -30,59 +24,55 @@
   width: 100%;
 }
 .home-body .home-content .homeBg {
+  display: none;
+}
+.home-body .home-content .homeBgMobile {
   width: 100%;
   display: block;
+  height: 75vh;
 }
 .home-body .home-content .home-overlay-text {
   position: absolute;
-  top: 20%;
+  top: 45%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
   text-align: center;
-  color: white;
-  width: 80%;
-}
-.home-body .home-content .home-overlay-text h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-.home-body .home-content .home-overlay-text p {
-  font-size: 1.25rem;
-}
-.home-body .home-content .comingSoon {
   color: #FFF8BD;
-  display: grid;
-  place-content: center;
-  height: 70vh;
-  font-size: 6rem;
-  font-family: "Italianno", cursive;
+  width: 100%;
+  font-family: "Migaela", serif;
+  font-size: 3rem;
+}
+.home-body .home-content .home-overlay-text .home-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+  padding: 1.25rem 1.75rem;
+  border-radius: 999px;
+  background: #DC764D;
+  color: #452F21;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1;
+  box-shadow: 0 10px 24px rgba(69, 47, 33, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.home-body .home-content .home-overlay-text .home-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(69, 47, 33, 0.26);
+}
+.home-body .home-content .home-overlay-text .home-cta:active {
+  transform: translateY(0);
+}
+.home-body .home-content .home-overlay-text .home-cta:focus-visible {
+  outline: 3px solid rgba(255, 248, 189, 0.9);
+  outline-offset: 4px;
 }
 
 @media screen and (min-width: 1024px) {
-  .home-body .home-bg-mobile {
-    display: none;
-  }
-  .home-body .home-bg-pattern {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 10%;
-    display: block;
-    z-index: 0;
-    pointer-events: none;
-    background-repeat: repeat-y;
-    background-position: top center;
-    background-size: 100% auto;
-  }
-  .home-body .home-bg-pattern-left {
-    left: 0;
-    background-image: url("/assets/images/home-bg-pattern-left.png");
-  }
-  .home-body .home-bg-pattern-right {
-    right: 0;
-    background-image: url("/assets/images/home-bg-pattern-right.png");
-  }
   .home-body .home-content {
     position: relative;
     z-index: 1;
@@ -90,6 +80,37 @@
     text-align: center;
   }
   .home-body .home-content .homeBg {
+    display: block;
     width: 100%;
+    height: 100vh;
+  }
+  .home-body .home-content .homeBgMobile {
+    display: none;
+  }
+  .home-body .home-content .home-overlay-text {
+    top: 50%;
+    font-size: 6.5rem;
+    letter-spacing: 0.1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+  }
+  .home-body .home-content .home-overlay-text .welcome {
+    margin: 0;
+    margin-right: 34rem;
+    font-weight: 500;
+    line-height: 0.9;
+  }
+  .home-body .home-content .home-overlay-text .lovebug {
+    margin: 0;
+    margin-left: 6rem;
+    font-weight: 500;
+    line-height: 0.9;
+  }
+  .home-body .home-content .home-overlay-text .home-cta {
+    margin-top: 1.25rem;
+    font-size: 2.5rem;
+    padding: 1.25rem 2rem;
   }
 }/*# sourceMappingURL=home-page.component.css.map */

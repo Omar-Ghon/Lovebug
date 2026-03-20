@@ -9,6 +9,69 @@
     padding: 1.5rem 1.75rem 3rem;
     box-sizing: border-box;
 
+    .how-to-order-intro {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto 2.5rem;
+      padding: 1.25rem 1.25rem 1.5rem;
+      background: rgba($lemon, 0.92);
+      border: 2px solid rgba($dark-coffee, 0.12);
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba($dark-coffee, 0.08);
+      text-align: center;
+
+      .how-to-order-title {
+        margin-bottom: 0.75rem;
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        line-height: 1.05;
+        font-weight: 800;
+        color: $dark-coffee;
+      }
+
+      .how-to-order-subtitle {
+        max-width: 640px;
+        margin: 0 auto;
+        font-size: 1rem;
+        line-height: 1.6;
+        color: rgba($dark-coffee, 0.88);
+      }
+
+      .how-to-order-notice {
+        width: fit-content;
+        max-width: 100%;
+        margin: 1.25rem auto 0;
+        padding: 0.75rem 1.4rem;
+        border-radius: 1.5rem;
+        background: $pink;
+        color: $dark-coffee;
+        font-size: 1.25rem;
+        line-height: 1.4;
+        font-weight: 500;
+        box-shadow: 0 6px 18px rgba($dark-coffee, 0.08);
+
+        .how-to-order-notice-label {
+          font-weight: 800;
+        }
+
+        strong {
+          color: $red;
+          font-weight: 800;
+        }
+      }
+    }
+
+    .how-to-order-status {
+      text-align: center;
+      color: $lemon;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+
+      &.how-to-order-status--error {
+        color: #fff;
+      }
+    }
+
     .category-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -19,10 +82,42 @@
   }
 }
 
+@media screen and (min-width: 768px) {
+  .how-to-order-body {
+    .how-to-order-content {
+      .how-to-order-intro {
+        padding: 1.75rem 1rem 2rem;
+        margin-bottom: 3rem;
+
+        .how-to-order-subtitle {
+          font-size: 1rem;
+        }
+
+        .how-to-order-notice {
+          padding: 0.95rem 1.25rem;
+          font-size: 1.25rem;
+          font-weight: 600;
+          // border-radius: 999px;
+        }
+      }
+    }
+  }
+}
+
 @media screen and (min-width: 1024px) {
   .how-to-order-body {
     .how-to-order-content {
       padding: 2.5rem 3rem 4rem;
+
+      .how-to-order-intro {
+        margin-bottom: 3.5rem;
+
+        
+        .how-to-order-title {
+          font-size: 2rem;
+        }
+
+      }
 
       .category-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));

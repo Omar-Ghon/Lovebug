@@ -4,10 +4,124 @@
   box-sizing: border-box;
 }
 
+@font-face {
+  font-family: "Migaela";
+  src: url("../../../assets/fonts/Migaela-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 .about-me-body {
   position: relative;
   min-height: 100vh;
   width: 100%;
   overflow: hidden;
   background: #E5B1C1;
+}
+.about-me-body .about-me-content {
+  padding-bottom: 3rem;
+}
+.about-me-body .about-me-content .about-me-title {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: center;
+}
+.about-me-body .about-me-content .about-me-title .about-me-image-wrapper {
+  margin: 1rem 1rem 1rem;
+}
+.about-me-body .about-me-content .about-me-title .about-me-image-wrapper .about-me-image {
+  width: 100%;
+}
+.about-me-body .about-me-content .about-me-title .about-me-text {
+  text-align: center;
+  color: #452F21;
+  padding: 0 1rem;
+}
+.about-me-body .about-me-content .about-me-title .about-me-text .about-me-heading {
+  font-family: "Migaela", serif;
+  font-size: 3.5rem;
+  font-weight: 550;
+}
+.about-me-body .about-me-content .about-me-title .about-me-text .about-me-paragraph {
+  font-size: 1.25rem;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+}
+.about-me-body .about-me-content .about-me-title .about-me-text .social-media-links {
+  display: flex;
+  justify-content: space-around;
+  align-content: center;
+  gap: 0.5rem;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  margin-top: 2rem;
+}
+.about-me-body .about-me-content .about-me-title .about-me-text .social-media-links .social-media {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+.about-me-body .about-me-content .about-me-title .about-me-text .social-media-links .social-media img {
+  height: 2rem;
+  width: 2rem;
+}
+.about-me-body .about-me-content .about-me-title .about-me-text .social-media-links .social-media .social-media-text {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+@media screen and (min-width: 1024px) {
+  .about-me-body .about-me-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 4rem 5rem;
+  }
+  .about-me-body .about-me-content .about-me-title {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin: 0 0 0 5rem;
+    gap: 5rem;
+  }
+  .about-me-body .about-me-content .about-me-title .about-me-text {
+    font-family: "Migaela", serif;
+    color: #452F21;
+    text-align: center;
+    margin-top: 1.5rem;
+    flex: 0 0 55%;
+  }
+  .about-me-body .about-me-content .about-me-title .about-me-text .about-me-heading {
+    font-size: 6rem;
+  }
+  .about-me-body .about-me-content .about-me-title .about-me-text .about-me-paragraph {
+    font-size: 1.5rem;
+    max-width: 50vw;
+    font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+  .about-me-body .about-me-content .about-me-title .about-me-text .social-media-links {
+    display: flex;
+    justify-content: space-around;
+  }
+  .about-me-body .about-me-content .about-me-title .about-me-text .social-media-links .social-media {
+    gap: 0.25rem;
+  }
+  .about-me-body .about-me-content .about-me-title .about-me-text .social-media-links .social-media img {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+  .about-me-body .about-me-content .about-me-title .about-me-text .social-media-links .social-media .social-media-text {
+    font-size: 1.1rem;
+  }
+  .about-me-body .about-me-content .about-me-title .about-me-image-wrapper {
+    flex: 0 0 45%;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 2rem;
+  }
+  .about-me-body .about-me-content .about-me-title .about-me-image-wrapper .about-me-image {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    display: block;
+  }
 }/*# sourceMappingURL=about-me.component.css.map */

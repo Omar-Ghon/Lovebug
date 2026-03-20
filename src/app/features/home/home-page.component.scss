@@ -10,25 +10,10 @@
 
 .home-body {
   position: relative;
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
   overflow: hidden;
   background: $dark-coffee;
-
-  .home-bg-pattern {
-    display: none;
-  }
-
-  .home-bg-mobile {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: auto;
-    display: block;
-    z-index: 0;
-    pointer-events: none;
-  }
 
   .home-content {
     position: relative;
@@ -57,55 +42,47 @@
       font-family: "Migaela", serif;
       font-size: 3rem;
 
-      // .welcome {
-      //   margin-right: 5.5rem;
-      // }
+    .home-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2rem;
+      padding: 1.25rem 1.75rem;
+      border-radius: 999px;
+      background: $burnt-peach;
+      color: $dark-coffee;
+      text-decoration: none;
+      font-family: inherit;
+      font-size: 2rem;
+      font-weight: 600;
+      line-height: 1;
+      box-shadow: 0 10px 24px rgba($dark-coffee, 0.2);
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 
-      // .lovebug {
-      //   margin-left: 5.5rem;
-      // }
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 30px rgba($dark-coffee, 0.26);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+
+      &:focus-visible {
+        outline: 3px solid rgba($lemon, 0.9);
+        outline-offset: 4px;
+      }
+    }
     }
 
-    .comingSoon {
-      color: $lemon;
-      display: grid;
-      place-content: center;
-      height: 70vh;
-      font-size: 6rem;
-      font-family: "Italianno", cursive;
-    }
   }
 }
 
 @media screen and (min-width: 1024px) {
   .home-body {
-
-    .home-bg-mobile {
-      display: none;
-    }
-
-    .home-bg-pattern {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 10%;
-      display: block;
-      z-index: 0;
-      pointer-events: none;
-      background-repeat: repeat-y;
-      background-position: top center;
-      background-size: 100% auto;
-    }
-
-    .home-bg-pattern-left {
-      left: 0;
-      background-image: url("/assets/images/home-bg-pattern-left.png");
-    }
-
-    .home-bg-pattern-right {
-      right: 0;
-      background-image: url("/assets/images/home-bg-pattern-right.png");
-    }
 
     .home-content {
       position: relative;
@@ -116,7 +93,7 @@
       .homeBg {
         display: block;
         width: 100%;
-        height: 90vh;
+        height: 100vh;
       }
 
       .homeBgMobile {
@@ -124,18 +101,32 @@
       }
 
       .home-overlay-text {
-        top: 40%;
-        font-size: 6rem;
+        top: 50%;
+        font-size: 6.5rem;
         letter-spacing: 0.1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3rem;
 
         .welcome {
-          margin-right: 38rem;
-          font-weight: 400;
+          margin: 0;
+          margin-right: 34rem;
+          font-weight: 500;
+          line-height: 0.9;
         }
 
         .lovebug {
-          margin-left: 2rem;
-          font-weight: 400;
+          margin: 0;
+          margin-left: 6rem;
+          font-weight: 500;
+          line-height: 0.9;
+        }
+
+        .home-cta {
+          margin-top: 1.25rem;
+          font-size: 2.5rem;
+          padding: 1.25rem 2rem;
         }
       }
     }

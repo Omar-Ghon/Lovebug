@@ -29,12 +29,14 @@ export interface LovebugOrderSubmissionPayload {
   files: string[];
 }
 
-export interface LovebugOrderSubmissionResponse {
+export type LovebugOrderSubmissionResponse = {
   success: boolean;
   message?: string;
   orderId?: string;
   error?: string;
-}
+  emailSent?: boolean;
+  emailError?: string;
+};
 
 @Injectable({
   providedIn: 'root'

@@ -113,7 +113,7 @@
           flex-direction: column;
           gap: 1.5rem;
           margin-top: 0.25rem;
-          font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+          font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
 
           .form-section {
             display: flex;
@@ -184,6 +184,12 @@
                   0 0 0 4px rgba(220, 118, 77, 0.16),
                   inset 0 1px 1px rgba(69, 47, 33, 0.04);
                 transform: translateY(-1px);
+              }
+
+              &.is-invalid {
+                border-color: #ffb3b3;
+                background: #fff5f5;
+                box-shadow: 0 0 0 4px rgba(197, 62, 62, 0.14);
               }
             }
 
@@ -259,6 +265,10 @@
                   }
                 }
 
+                &.is-invalid {
+                  border-color: #ffb3b3;
+                  box-shadow: 0 0 0 4px rgba(197, 62, 62, 0.14);
+                }
               }
 
               span {
@@ -279,12 +289,6 @@
             border: 1px solid rgba(197, 62, 62, 0.35);
             background: rgba(197, 62, 62, 0.16);
             color: #fff3f3;
-          }
-
-          .success-message {
-            border: 1px solid rgba(255, 248, 189, 0.34);
-            background: rgba(255, 248, 189, 0.16);
-            color: #fff;
           }
 
           .submit-button {
@@ -322,6 +326,39 @@
               transform: none;
               box-shadow: none;
             }
+          }
+
+          .required-indicator {
+            color: rgba($red, 0.8);
+            font-weight: 800;
+            font-size: 1.5rem;
+          }
+
+          .field-error {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.45rem;
+            margin-top: 0.45rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            line-height: 1.45;
+            color: #d44242;
+          }
+
+          .field-error-icon {
+            flex-shrink: 0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            transform: translateY(0.02rem);
+
+            .field-error-img {
+              height: 1.5rem;
+              width: 2rem;
+            }
+          }
+
+          .field-error-text {
+            display: inline-block;
           }
         }
       }
@@ -377,6 +414,147 @@
       }
     }
   }
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    background: rgba(30, 18, 12, 0.58);
+    backdrop-filter: blur(6px);
+  }
+
+  .modal-card {
+    position: relative;
+    width: min(100%, 640px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 1.5rem;
+    background:
+      radial-gradient(circle at top left, rgba(255, 248, 189, 0.14), transparent 35%),
+      rgba(61, 97, 78, 0.98);
+    box-shadow: 0 30px 70px rgba(21, 12, 8, 0.3);
+    overflow: hidden;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 0.9rem;
+    right: 0.9rem;
+    z-index: 2;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 0;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease,
+      opacity 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.04);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  .modal-content {
+    padding: 2rem 1.35rem 1.5rem;
+  }
+
+  .modal-title {
+    margin: 0 0 0.9rem;
+    font-size: 1.9rem;
+    line-height: 1.1;
+    font-weight: 800;
+    color: white;
+  }
+
+  .modal-text {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.92);
+
+    & + .modal-text {
+      margin-top: 0.65rem;
+    }
+  }
+
+  .modal-order-id,
+  .modal-email {
+    font-weight: 800;
+    color: $lemon;
+    word-break: break-word;
+  }
+
+  .modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    margin-top: 1.5rem;
+  }
+
+  .modal-actions-single {
+    justify-content: flex-start;
+  }
+
+  .modal-button {
+    width: 100%;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.95rem 1.2rem;
+    font: inherit;
+    font-size: 1.15rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      opacity 0.2s ease,
+      background 0.2s ease,
+      color 0.2s ease;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  .modal-button-primary {
+    background: $lemon;
+    color: $dark-coffee;
+    box-shadow: 0 16px 28px rgba(69, 47, 33, 0.18);
+
+    &:hover:not(:disabled) {
+      background: #fffce0;
+    }
+  }
+
+  .modal-button-secondary {
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.18);
+    }
+  }
 }
 
 @media screen and (min-width: 768px) {
@@ -395,6 +573,41 @@
           }
         }
       }
+    }
+
+    .modal-backdrop {
+      padding: 2rem;
+    }
+
+    .modal-content {
+      padding: 3.75rem 2rem 2rem;
+    }
+
+    .modal-title {
+      font-size: 2.2rem;
+    }
+
+    .modal-text {
+      font-size: 1.25rem;
+    }
+
+    .modal-actions {
+      flex-direction: row;
+      justify-content: space-around;
+    }
+
+    .modal-actions-single {
+      justify-content: flex-start;
+
+      .modal-button {
+        width: auto;
+        min-width: 170px;
+      }
+    }
+
+    .modal-button {
+      width: auto;
+      min-width: 180px;
     }
   }
 }
@@ -466,19 +679,26 @@
               }
 
               #preferredCompletionDate {
-              max-width: 100%;
-            }
+                max-width: 100%;
+              }
             }
 
             .submit-button {
               width: fit-content;
               min-width: 220px;
               padding: 1.25rem 2.25rem;
-
             }
           }
         }
       }
+    }
+
+    .modal-content {
+      padding: 2rem 2.2rem 2.2rem;
+    }
+
+    .modal-button {
+      font-size: 1.5rem;
     }
   }
 }

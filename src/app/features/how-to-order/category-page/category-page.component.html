@@ -28,9 +28,20 @@
               <h2 class="form-section-title">General Information</h2>
 
               <div class="form-field">
-                <label class="form-label" for="fullName">Full Name</label>
+                <label class="form-label" for="fullName">
+                  Full Name <span class="required-indicator">*</span>
+                </label>
+                @if (hasControlError('fullName')) {
+                  <div class="field-error" role="alert" aria-live="polite">
+                    <span class="field-error-icon" aria-hidden="true">
+                      <img src="assets/icons/warning-icon.png" class="field-error-img" alt="Error icon">
+                    </span>
+                    <span class="field-error-text">{{ getControlErrorMessage('fullName') }}</span>
+                  </div>
+                }
                 <input
                   class="form-input"
+                  [class.is-invalid]="hasControlError('fullName')"
                   id="fullName"
                   type="text"
                   formControlName="fullName"
@@ -52,9 +63,20 @@
               </div>
 
               <div class="form-field">
-                <label class="form-label" for="emailAddress">Email Address</label>
+                <label class="form-label" for="emailAddress">
+                  Email Address <span class="required-indicator">*</span>
+                </label>
+                @if (hasControlError('emailAddress')) {
+                  <div class="field-error" role="alert" aria-live="polite">
+                    <span class="field-error-icon" aria-hidden="true">
+                      <img src="assets/icons/warning-icon.png" class="field-error-img" alt="Error icon">
+                    </span>
+                    <span class="field-error-text">{{ getControlErrorMessage('emailAddress') }}</span>
+                  </div>
+                }
                 <input
                   class="form-input"
+                  [class.is-invalid]="hasControlError('emailAddress')"
                   id="emailAddress"
                   type="email"
                   formControlName="emailAddress"
@@ -64,10 +86,19 @@
 
               <div class="form-field">
                 <label class="form-label" for="shippingAddress">
-                  Shipping Address
+                  Shipping Address <span class="required-indicator">*</span>
                 </label>
+                @if (hasControlError('shippingAddress')) {
+                  <div class="field-error" role="alert" aria-live="polite">
+                    <span class="field-error-icon" aria-hidden="true">
+                      <img src="assets/icons/warning-icon.png" class="field-error-img" alt="Error icon">
+                    </span>
+                    <span class="field-error-text">{{ getControlErrorMessage('shippingAddress') }}</span>
+                  </div>
+                }
                 <textarea
                   class="form-textarea"
+                  [class.is-invalid]="hasControlError('shippingAddress')"
                   id="shippingAddress"
                   formControlName="shippingAddress"
                   placeholder="Enter your full shipping address"
@@ -75,8 +106,22 @@
               </div>
 
               <div class="form-field">
-                <label class="form-label">Is this a gift?</label>
-                <select class="form-select" formControlName="isGift">
+                <label class="form-label">
+                  Is this a gift? <span class="required-indicator">*</span>
+                </label>
+                @if (hasControlError('isGift')) {
+                  <div class="field-error" role="alert" aria-live="polite">
+                    <span class="field-error-icon" aria-hidden="true">
+                      <img src="assets/icons/warning-icon.png" class="field-error-img" alt="Error icon">
+                    </span>
+                    <span class="field-error-text">{{ getControlErrorMessage('isGift') }}</span>
+                  </div>
+                }
+                <select
+                  class="form-select"
+                  [class.is-invalid]="hasControlError('isGift')"
+                  formControlName="isGift"
+                >
                   <option [ngValue]="null" disabled>Select an option</option>
                   <option [ngValue]="true">Yes</option>
                   <option [ngValue]="false">No</option>
@@ -85,10 +130,19 @@
 
               <div class="form-field">
                 <label class="form-label" for="preferredCompletionDate">
-                  Preferred completion date
+                  Preferred completion date <span class="required-indicator">*</span>
                 </label>
+                @if (hasControlError('preferredCompletionDate')) {
+                  <div class="field-error" role="alert" aria-live="polite">
+                    <span class="field-error-icon" aria-hidden="true">
+                      <img src="assets/icons/warning-icon.png" class="field-error-img" alt="Error icon">
+                    </span>
+                    <span class="field-error-text">{{ getControlErrorMessage('preferredCompletionDate') }}</span>
+                  </div>
+                }
                 <input
                   class="form-input"
+                  [class.is-invalid]="hasControlError('preferredCompletionDate')"
                   id="preferredCompletionDate"
                   type="date"
                   formControlName="preferredCompletionDate"
@@ -98,8 +152,21 @@
               <div class="form-field">
                 <label class="form-label">
                   Is this a priority/rush order? (Rush fees apply)
+                  <span class="required-indicator">*</span>
                 </label>
-                <select class="form-select" formControlName="isRushOrder">
+                @if (hasControlError('isRushOrder')) {
+                  <div class="field-error" role="alert" aria-live="polite">
+                    <span class="field-error-icon" aria-hidden="true">
+                      <img src="assets/icons/warning-icon.png" class="field-error-img" alt="Error icon">
+                    </span>
+                    <span class="field-error-text">{{ getControlErrorMessage('isRushOrder') }}</span>
+                  </div>
+                }
+                <select
+                  class="form-select"
+                  [class.is-invalid]="hasControlError('isRushOrder')"
+                  formControlName="isRushOrder"
+                >
                   <option [ngValue]="null" disabled>Select an option</option>
                   <option [ngValue]="true">Yes</option>
                   <option [ngValue]="false">No</option>
@@ -145,29 +212,55 @@
               </div>
 
               <div class="form-field checkbox-field">
+                @if (hasControlError('agreementYes')) {
+                  <div class="field-error" role="alert" aria-live="polite">
+                    <span class="field-error-icon" aria-hidden="true">
+                      <img src="assets/icons/warning-icon.png" class="field-error-img" alt="Error icon">
+                    </span>
+                    <span class="field-error-text">{{ getControlErrorMessage('agreementYes') }}</span>
+                  </div>
+                }
                 <label class="checkbox-label">
-                  <input type="checkbox" formControlName="agreementYes" />
+                  <input
+                    class="checkbox-input"
+                    [class.is-invalid]="hasControlError('agreementYes')"
+                    type="checkbox"
+                    formControlName="agreementYes"
+                  />
                   <span>
                     I understand custom items are non-refundable once production
-                    begins.
+                    begins. <span class="required-indicator">*</span>
                   </span>
                 </label>
               </div>
             </div>
 
             <div class="form-section" formGroupName="answers">
-              <h2 class="form-section-title"> {{categoryItem.title}} Details</h2>
+              <h2 class="form-section-title">{{ categoryItem.title }} Details</h2>
 
               @for (question of categoryItem.questions; track question.key) {
                 <div class="form-field">
                   <label class="form-label" [for]="question.key">
                     {{ question.label }}
+                    @if (question.required) {
+                      <span class="required-indicator">*</span>
+                    }
                   </label>
+
+                  @if (hasAnswerError(question.key)) {
+                    <div class="field-error" role="alert" aria-live="polite">
+                      <span class="field-error-icon" aria-hidden="true">
+                        <img src="assets/icons/warning-icon.png" class="field-error-img" alt="Error icon">
+                      </span>
+                      <span class="field-error-text">{{ getAnswerErrorMessage(question.key) }}</span>
+                    </div>
+                  }
 
                   @switch (question.type) {
                     @case ('text') {
                       <input
                         class="form-input"
+                        [class.is-invalid]="hasAnswerError(question.key)"
                         [id]="question.key"
                         type="text"
                         [formControlName]="question.key"
@@ -178,6 +271,7 @@
                     @case ('number') {
                       <input
                         class="form-input"
+                        [class.is-invalid]="hasAnswerError(question.key)"
                         [id]="question.key"
                         type="number"
                         [formControlName]="question.key"
@@ -188,6 +282,7 @@
                     @case ('textarea') {
                       <textarea
                         class="form-textarea"
+                        [class.is-invalid]="hasAnswerError(question.key)"
                         [id]="question.key"
                         [formControlName]="question.key"
                         [placeholder]="question.placeholder ?? ''"
@@ -197,6 +292,7 @@
                     @case ('select') {
                       <select
                         class="form-select"
+                        [class.is-invalid]="hasAnswerError(question.key)"
                         [id]="question.key"
                         [formControlName]="question.key"
                       >
@@ -215,17 +311,8 @@
             </div>
 
             @if (submitError) {
-              <div class="form-message error-message">
+              <div class="form-message error-message" role="alert" aria-live="polite">
                 {{ submitError }}
-              </div>
-            }
-
-            @if (submitSuccess) {
-              <div class="form-message success-message">
-                {{ submitSuccess }}
-                @if (submittedOrderId) {
-                  <span> Your order ID is {{ submittedOrderId }}.</span>
-                }
               </div>
             }
 
@@ -247,4 +334,95 @@
       </div>
     }
   </section>
+
+  @if (activeModal) {
+    <div
+      class="modal-backdrop"
+      (click)="onBackdropClick()"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        [attr.aria-labelledby]="activeModal === 'confirm' ? 'confirm-modal-title' : 'success-modal-title'"
+        (click)="$event.stopPropagation()"
+      >
+        <button
+          class="modal-close"
+          type="button"
+          aria-label="Close modal"
+          (click)="closeModal()"
+          [disabled]="isSubmitting"
+        >
+          ×
+        </button>
+
+        @if (activeModal === 'confirm') {
+          <div class="modal-content">
+            <h2 class="modal-title" id="confirm-modal-title">
+              Are you sure?
+            </h2>
+            <p class="modal-text">
+              Please confirm that all details are correct before sending your order request.
+            </p>
+
+            <div class="modal-actions">
+              <button
+                class="modal-button modal-button-secondary"
+                type="button"
+                (click)="closeModal()"
+                [disabled]="isSubmitting"
+              >
+                No
+              </button>
+
+              <button
+                class="modal-button modal-button-primary"
+                type="button"
+                (click)="confirmSubmit()"
+                [disabled]="isSubmitting"
+              >
+                {{ isSubmitting ? 'Submitting...' : 'Yes' }}
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (activeModal === 'success') {
+          <div class="modal-content">
+            <h2 class="modal-title" id="success-modal-title">
+              Your order request was submitted successfully
+            </h2>
+
+            <p class="modal-text">
+              Your order ID is
+              <span class="modal-order-id">{{ submittedOrderId }}</span>.
+            </p>
+
+          @if (confirmationEmailSent) {
+            <p class="modal-text">
+              A confirmation has been sent to
+              <span class="modal-email">{{ submittedEmailAddress }}</span>.
+            </p>
+          } @else {
+            <p class="modal-text">
+              Your request was saved, but the confirmation email could not be sent right now.
+            </p>
+          }
+
+            <div class="modal-actions modal-actions-single">
+              <button
+                class="modal-button modal-button-primary"
+                type="button"
+                (click)="closeModal()"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
 </main>

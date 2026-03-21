@@ -2,7 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import { map } from 'rxjs/operators';
 
 import { HowToOrderService } from '../services/how-to-order.service';
@@ -11,6 +17,8 @@ import {
   LovebugOrderSubmissionPayload,
   OrderSubmissionService
 } from '../services/order-submission.service';
+
+type ActiveModal = 'confirm' | 'success' | null;
 
 @Component({
   selector: 'app-category-page',
@@ -24,6 +32,7 @@ export class CategoryPageComponent {
   private readonly howToOrderService = inject(HowToOrderService);
   private readonly fb = inject(FormBuilder);
   private readonly orderSubmissionService = inject(OrderSubmissionService);
+  protected confirmationEmailSent = false;
 
   private readonly slug = toSignal(
     this.route.paramMap.pipe(map((params) => params.get('slug') ?? '')),
@@ -63,8 +72,9 @@ export class CategoryPageComponent {
 
   protected isSubmitting = false;
   protected submitError = '';
-  protected submitSuccess = '';
   protected submittedOrderId = '';
+  protected submittedEmailAddress = '';
+  protected activeModal: ActiveModal = null;
 
   constructor() {
     effect(() => {
@@ -93,19 +103,47 @@ export class CategoryPageComponent {
     return this.form.get('answers') as FormGroup;
   }
 
-  protected async onSubmit(): Promise<void> {
+  protected onSubmit(): void {
     this.submitError = '';
-    this.submitSuccess = '';
-    this.submittedOrderId = '';
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.scrollToFirstInvalidField();
+      return;
+    }
+
+    this.activeModal = 'confirm';
+  }
+
+  protected closeModal(): void {
+    if (this.isSubmitting) {
+      return;
+    }
+
+    this.activeModal = null;
+  }
+
+  protected onBackdropClick(): void {
+    this.closeModal();
+  }
+
+  protected async confirmSubmit(): Promise<void> {
+    this.submitError = '';
+    this.submittedOrderId = '';
+    this.submittedEmailAddress = '';
+    this.confirmationEmailSent = false;
+
+    if (this.form.invalid) {
+      this.activeModal = null;
+      this.form.markAllAsTouched();
+      this.scrollToFirstInvalidField();
       return;
     }
 
     const categoryItem = this.category();
 
     if (!categoryItem) {
+      this.activeModal = null;
       this.submitError = 'Category not found.';
       return;
     }
@@ -138,35 +176,20 @@ export class CategoryPageComponent {
       const response = await this.orderSubmissionService.submitOrder(payload);
 
       if (!response.success) {
+        this.activeModal = null;
         this.submitError = response.error || 'Failed to submit order.';
         return;
       }
 
-      this.submitSuccess = 'Order submitted successfully.';
       this.submittedOrderId = response.orderId ?? '';
+      this.submittedEmailAddress = raw.emailAddress ?? '';
+      this.confirmationEmailSent = response.emailSent === true;
 
-      this.form.reset({
-        fullName: '',
-        instagramUsername: '',
-        emailAddress: '',
-        shippingAddress: '',
-        isGift: null,
-        preferredCompletionDate: '',
-        isRushOrder: null,
-        budgetRange: '',
-        referenceImages: '',
-        allergies: '',
-        agreementYes: false
-      });
-
-      const rebuiltAnswersGroup = this.answersGroup;
-      Object.keys(rebuiltAnswersGroup.controls).forEach((key) => {
-        rebuiltAnswersGroup.get(key)?.setValue('');
-        rebuiltAnswersGroup.get(key)?.markAsPristine();
-        rebuiltAnswersGroup.get(key)?.markAsUntouched();
-      });
+      this.clearForm();
+      this.activeModal = 'success';
     } catch (error) {
       console.error(error);
+      this.activeModal = null;
       this.submitError = 'Something went wrong while submitting your order.';
     } finally {
       this.isSubmitting = false;
@@ -190,5 +213,81 @@ export class CategoryPageComponent {
   protected hasAnswerError(questionKey: string): boolean {
     const control = this.answersGroup.get(questionKey);
     return !!control && control.touched && control.invalid;
+  }
+
+  protected getControlErrorMessage(controlName: string): string {
+    const control = this.form.get(controlName);
+
+    if (!control || !control.touched) {
+      return '';
+    }
+
+    if (control.hasError('required')) {
+      return 'Please fill in this required field.';
+    }
+
+    if (control.hasError('email')) {
+      return 'Please enter a valid email address.';
+    }
+
+    if (control.hasError('requiredTrue')) {
+      return 'Please check this box before submitting.';
+    }
+
+    return 'Please check this field.';
+  }
+
+  protected getAnswerErrorMessage(questionKey: string): string {
+    const control = this.answersGroup.get(questionKey);
+
+    if (!control || !control.touched) {
+      return '';
+    }
+
+    if (control.hasError('required')) {
+      return 'Please fill in this required field.';
+    }
+
+    return 'Please check this field.';
+  }
+
+  private clearForm(): void {
+    this.form.reset({
+      fullName: '',
+      instagramUsername: '',
+      emailAddress: '',
+      shippingAddress: '',
+      isGift: null,
+      preferredCompletionDate: '',
+      isRushOrder: null,
+      budgetRange: '',
+      referenceImages: '',
+      allergies: '',
+      agreementYes: false
+    });
+
+    Object.keys(this.answersGroup.controls).forEach((key) => {
+      this.answersGroup.get(key)?.setValue('');
+      this.answersGroup.get(key)?.markAsPristine();
+      this.answersGroup.get(key)?.markAsUntouched();
+    });
+
+    this.form.markAsPristine();
+    this.form.markAsUntouched();
+  }
+
+  private scrollToFirstInvalidField(): void {
+    setTimeout(() => {
+      const firstInvalid = document.querySelector(
+        '.form-input.is-invalid, .form-textarea.is-invalid, .form-select.is-invalid, .checkbox-input.is-invalid'
+      ) as HTMLElement | null;
+
+      firstInvalid?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+
+      firstInvalid?.focus?.();
+    });
   }
 }

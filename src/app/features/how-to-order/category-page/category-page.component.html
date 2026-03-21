@@ -156,7 +156,7 @@
             </div>
 
             <div class="form-section" formGroupName="answers">
-              <h2 class="form-section-title">Category Details</h2>
+              <h2 class="form-section-title"> {{categoryItem.title}} Details</h2>
 
               @for (question of categoryItem.questions; track question.key) {
                 <div class="form-field">

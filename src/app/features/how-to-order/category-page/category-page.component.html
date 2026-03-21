@@ -145,6 +145,7 @@
                   [class.is-invalid]="hasControlError('preferredCompletionDate')"
                   id="preferredCompletionDate"
                   type="date"
+                  [min]="todayDate"
                   formControlName="preferredCompletionDate"
                 />
               </div>
@@ -345,6 +346,7 @@
         class="modal-card"
         role="dialog"
         aria-modal="true"
+        tabindex="-1"
         [attr.aria-labelledby]="activeModal === 'confirm' ? 'confirm-modal-title' : 'success-modal-title'"
         (click)="$event.stopPropagation()"
       >

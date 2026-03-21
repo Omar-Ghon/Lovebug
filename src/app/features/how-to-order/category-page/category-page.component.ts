@@ -1,12 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, HostListener, computed, effect, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
+  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
   Validators
 } from '@angular/forms';
 import { map } from 'rxjs/operators';
@@ -28,11 +31,72 @@ type ActiveModal = 'confirm' | 'success' | null;
   styleUrl: './category-page.component.scss',
 })
 export class CategoryPageComponent {
+    private normalizeDate(date: Date): Date {
+    const normalized = new Date(date);
+    normalized.setHours(0, 0, 0, 0);
+    return normalized;
+  }
+
+  private notPastDateValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+
+      if (!value) {
+        return null;
+      }
+
+      const selectedDate = new Date(value);
+
+      if (Number.isNaN(selectedDate.getTime())) {
+        return { invalidDate: true };
+      }
+
+      const today = this.normalizeDate(new Date());
+      const chosen = this.normalizeDate(selectedDate);
+
+      return chosen < today ? { pastDate: true } : null;
+    };
+  }
+
+    @HostListener('document:keydown', ['$event'])
+  protected handleDocumentKeydown(event: KeyboardEvent): void {
+    if (!this.activeModal) {
+      return;
+    }
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeModal();
+      return;
+    }
+
+    if (event.key === 'Enter') {
+      const target = event.target as HTMLElement | null;
+      const tagName = target?.tagName?.toLowerCase();
+
+      if (tagName === 'textarea') {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (this.activeModal === 'confirm' && !this.isSubmitting) {
+        this.confirmSubmit();
+        return;
+      }
+
+      if (this.activeModal === 'success') {
+        this.closeModal();
+      }
+    }
+  }
+  
   private readonly route = inject(ActivatedRoute);
   private readonly howToOrderService = inject(HowToOrderService);
   private readonly fb = inject(FormBuilder);
   private readonly orderSubmissionService = inject(OrderSubmissionService);
   protected confirmationEmailSent = false;
+  protected readonly todayDate = new Date().toISOString().split('T')[0];
 
   private readonly slug = toSignal(
     this.route.paramMap.pipe(map((params) => params.get('slug') ?? '')),
@@ -61,7 +125,10 @@ export class CategoryPageComponent {
     emailAddress: ['', [Validators.required, Validators.email]],
     shippingAddress: ['', Validators.required],
     isGift: [null as boolean | null, Validators.required],
-    preferredCompletionDate: ['', Validators.required],
+    preferredCompletionDate: [
+  '',
+  [Validators.required, this.notPastDateValidator()]
+],
     isRushOrder: [null as boolean | null, Validators.required],
     budgetRange: [''],
     referenceImages: [''],
@@ -232,6 +299,14 @@ export class CategoryPageComponent {
 
     if (control.hasError('requiredTrue')) {
       return 'Please check this box before submitting.';
+    }
+
+    if (control.hasError('pastDate')) {
+      return 'Please choose a date that is not in the past.';
+    }
+
+    if (control.hasError('invalidDate')) {
+      return 'Please enter a valid date.';
     }
 
     return 'Please check this field.';

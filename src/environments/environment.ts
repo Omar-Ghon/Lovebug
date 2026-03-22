@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  lovebugApiUrl: 'https://script.google.com/macros/s/AKfycbw8z9eJN9aqJMhTwUdGkmV-6OzF0rGY0sNFWVtnxUAEgwnA7hy143EhocVPDLjQ73_rww/exec'
+  lovebugApiUrl: 'https://script.google.com/macros/s/AKfycbxeW1ZG2ftShY_OpWR4cdUO58wQFWSxYg76c4T4iRwLnRMDdaGmR9LR4TCiT6KJHySWEA/exec'
 };

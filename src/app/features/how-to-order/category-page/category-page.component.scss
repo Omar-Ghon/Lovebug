@@ -361,6 +361,53 @@
             display: inline-block;
           }
         }
+
+        .form-helper-text {
+          margin-top: 0.5rem;
+          font-size: 0.9rem;
+          color: $dark-coffee;
+          opacity: 0.8;
+        }
+
+        .selected-files-list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          margin-top: 0.9rem;
+        }
+
+        .selected-file-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 1rem;
+          padding: 0.75rem 1rem;
+          border: 1px solid rgba($dark-coffee, 0.15);
+          border-radius: 0.9rem;
+          background: rgba($lemon, 0.55);
+        }
+
+        .selected-file-name {
+          font-size: 0.95rem;
+          color: $dark-coffee;
+          word-break: break-word;
+        }
+
+        .remove-file-button {
+          border: none;
+          border-radius: 999px;
+          padding: 0.45rem 0.9rem;
+          background: $red;
+          color: white;
+          font: inherit;
+          cursor: pointer;
+          transition: transform 0.18s ease, opacity 0.18s ease;
+
+          &:hover {
+            transform: translateY(-1px);
+            opacity: 0.92;
+          }
+        }
       }
     }
 

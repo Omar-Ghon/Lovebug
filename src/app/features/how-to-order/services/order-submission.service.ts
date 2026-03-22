@@ -21,12 +21,18 @@ export interface LovebugOrderAnswers {
   [key: string]: string | number | boolean | null;
 }
 
+export interface LovebugUploadedFile {
+  name: string;
+  mimeType: string;
+  base64: string;
+}
+
 export interface LovebugOrderSubmissionPayload {
   categorySlug: string;
   categoryTitle: string;
   general: LovebugGeneralOrderInfo;
   answers: LovebugOrderAnswers;
-  files: string[];
+  files: LovebugUploadedFile[];
 }
 
 export type LovebugOrderSubmissionResponse = {

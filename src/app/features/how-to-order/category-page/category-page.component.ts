@@ -18,6 +18,7 @@ import { HowToOrderService } from '../services/how-to-order.service';
 import { OrderCategory } from '../models/order-categories.model';
 import {
   LovebugOrderSubmissionPayload,
+  LovebugUploadedFile,
   OrderSubmissionService
 } from '../services/order-submission.service';
 
@@ -31,7 +32,89 @@ type ActiveModal = 'confirm' | 'success' | null;
   styleUrl: './category-page.component.scss',
 })
 export class CategoryPageComponent {
-    private normalizeDate(date: Date): Date {
+  private readonly route = inject(ActivatedRoute);
+  private readonly howToOrderService = inject(HowToOrderService);
+  private readonly fb = inject(FormBuilder);
+  private readonly orderSubmissionService = inject(OrderSubmissionService);
+
+  protected confirmationEmailSent = false;
+  protected readonly todayDate = new Date().toISOString().split('T')[0];
+
+  protected isSubmitting = false;
+  protected submitError = '';
+  protected submittedOrderId = '';
+  protected submittedEmailAddress = '';
+  protected activeModal: ActiveModal = null;
+
+  protected selectedFiles: File[] = [];
+  protected fileUploadError = '';
+
+  private readonly maxFileCount = 5;
+  private readonly maxFileSizeBytes = 5 * 1024 * 1024;
+
+  private readonly slug = toSignal(
+    this.route.paramMap.pipe(map((params) => params.get('slug') ?? '')),
+    { initialValue: '' }
+  );
+
+  private readonly categories = toSignal(
+    this.howToOrderService.getCategories(),
+    { initialValue: [] as OrderCategory[] }
+  );
+
+  private readonly loading = toSignal(
+    this.howToOrderService.getLoading(),
+    { initialValue: true }
+  );
+
+  protected readonly category = computed<OrderCategory | undefined>(() =>
+    this.categories().find((item) => item.slug === this.slug())
+  );
+
+  protected readonly isLoading = computed(() => this.loading());
+
+  protected readonly form = this.fb.group({
+    fullName: ['', Validators.required],
+    instagramUsername: [''],
+    emailAddress: ['', [Validators.required, Validators.email]],
+    shippingAddress: ['', Validators.required],
+    isGift: [null as boolean | null, Validators.required],
+    preferredCompletionDate: [
+      '',
+      [Validators.required, this.notPastDateValidator()]
+    ],
+    isRushOrder: [null as boolean | null, Validators.required],
+    budgetRange: [''],
+    referenceImages: [''],
+    allergies: [''],
+    agreementYes: [false, Validators.requiredTrue],
+    answers: this.fb.group({})
+  });
+
+  constructor() {
+    effect(() => {
+      const category = this.category();
+      const answersGroup = this.answersGroup;
+
+      Object.keys(answersGroup.controls).forEach((key) => {
+        answersGroup.removeControl(key);
+      });
+
+      if (!category) {
+        return;
+      }
+
+      category.questions.forEach((question) => {
+        const validators = question.required ? [Validators.required] : [];
+        answersGroup.addControl(
+          question.key,
+          new FormControl('', validators)
+        );
+      });
+    });
+  }
+
+  private normalizeDate(date: Date): Date {
     const normalized = new Date(date);
     normalized.setHours(0, 0, 0, 0);
     return normalized;
@@ -58,7 +141,7 @@ export class CategoryPageComponent {
     };
   }
 
-    @HostListener('document:keydown', ['$event'])
+  @HostListener('document:keydown', ['$event'])
   protected handleDocumentKeydown(event: KeyboardEvent): void {
     if (!this.activeModal) {
       return;
@@ -90,81 +173,6 @@ export class CategoryPageComponent {
       }
     }
   }
-  
-  private readonly route = inject(ActivatedRoute);
-  private readonly howToOrderService = inject(HowToOrderService);
-  private readonly fb = inject(FormBuilder);
-  private readonly orderSubmissionService = inject(OrderSubmissionService);
-  protected confirmationEmailSent = false;
-  protected readonly todayDate = new Date().toISOString().split('T')[0];
-
-  private readonly slug = toSignal(
-    this.route.paramMap.pipe(map((params) => params.get('slug') ?? '')),
-    { initialValue: '' }
-  );
-
-  private readonly categories = toSignal(
-    this.howToOrderService.getCategories(),
-    { initialValue: [] as OrderCategory[] }
-  );
-
-  private readonly loading = toSignal(
-    this.howToOrderService.getLoading(),
-    { initialValue: true }
-  );
-
-  protected readonly category = computed<OrderCategory | undefined>(() =>
-    this.categories().find((item) => item.slug === this.slug())
-  );
-
-  protected readonly isLoading = computed(() => this.loading());
-
-  protected readonly form = this.fb.group({
-    fullName: ['', Validators.required],
-    instagramUsername: [''],
-    emailAddress: ['', [Validators.required, Validators.email]],
-    shippingAddress: ['', Validators.required],
-    isGift: [null as boolean | null, Validators.required],
-    preferredCompletionDate: [
-  '',
-  [Validators.required, this.notPastDateValidator()]
-],
-    isRushOrder: [null as boolean | null, Validators.required],
-    budgetRange: [''],
-    referenceImages: [''],
-    allergies: [''],
-    agreementYes: [false, Validators.requiredTrue],
-    answers: this.fb.group({})
-  });
-
-  protected isSubmitting = false;
-  protected submitError = '';
-  protected submittedOrderId = '';
-  protected submittedEmailAddress = '';
-  protected activeModal: ActiveModal = null;
-
-  constructor() {
-    effect(() => {
-      const category = this.category();
-      const answersGroup = this.answersGroup;
-
-      Object.keys(answersGroup.controls).forEach((key) => {
-        answersGroup.removeControl(key);
-      });
-
-      if (!category) {
-        return;
-      }
-
-      category.questions.forEach((question) => {
-        const validators = question.required ? [Validators.required] : [];
-        answersGroup.addControl(
-          question.key,
-          new FormControl('', validators)
-        );
-      });
-    });
-  }
 
   protected get answersGroup(): FormGroup {
     return this.form.get('answers') as FormGroup;
@@ -194,6 +202,64 @@ export class CategoryPageComponent {
     this.closeModal();
   }
 
+  protected onReferenceImagesSelected(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    const files = Array.from(input?.files ?? []);
+
+    this.fileUploadError = '';
+
+    if (!files.length) {
+      return;
+    }
+
+    const combinedFiles = [...this.selectedFiles, ...files];
+
+    if (combinedFiles.length > this.maxFileCount) {
+      this.fileUploadError = `You can upload up to ${this.maxFileCount} images.`;
+      if (input) {
+        input.value = '';
+      }
+      return;
+    }
+
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) {
+        this.fileUploadError = 'Only image files are allowed.';
+        if (input) {
+          input.value = '';
+        }
+        return;
+      }
+
+      if (file.size > this.maxFileSizeBytes) {
+        this.fileUploadError = 'Each image must be 5 MB or smaller.';
+        if (input) {
+          input.value = '';
+        }
+        return;
+      }
+    }
+
+    this.selectedFiles = combinedFiles;
+
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  protected removeSelectedFile(fileToRemove: File): void {
+    this.selectedFiles = this.selectedFiles.filter(
+      (file) =>
+        !(
+          file.name === fileToRemove.name &&
+          file.size === fileToRemove.size &&
+          file.lastModified === fileToRemove.lastModified
+        )
+    );
+
+    this.fileUploadError = '';
+  }
+
   protected async confirmSubmit(): Promise<void> {
     this.submitError = '';
     this.submittedOrderId = '';
@@ -217,6 +283,19 @@ export class CategoryPageComponent {
 
     const raw = this.form.getRawValue();
 
+    let uploadedFiles: LovebugUploadedFile[] = [];
+
+    try {
+      uploadedFiles = await Promise.all(
+        this.selectedFiles.map((file) => this.readFileAsBase64(file))
+      );
+    } catch (error) {
+      console.error(error);
+      this.activeModal = null;
+      this.submitError = 'Something went wrong while reading your images.';
+      return;
+    }
+
     const payload: LovebugOrderSubmissionPayload = {
       categorySlug: categoryItem.slug,
       categoryTitle: categoryItem.title,
@@ -234,7 +313,7 @@ export class CategoryPageComponent {
         agreementYes: raw.agreementYes ?? false
       },
       answers: (raw.answers ?? {}) as Record<string, string | number | boolean | null>,
-      files: []
+      files: uploadedFiles
     };
 
     this.isSubmitting = true;
@@ -326,6 +405,40 @@ export class CategoryPageComponent {
     return 'Please check this field.';
   }
 
+  private async readFileAsBase64(file: File): Promise<LovebugUploadedFile> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const result = reader.result;
+
+        if (typeof result !== 'string') {
+          reject(new Error(`Failed to read file: ${file.name}`));
+          return;
+        }
+
+        const base64 = result.split(',')[1];
+
+        if (!base64) {
+          reject(new Error(`Invalid base64 data for file: ${file.name}`));
+          return;
+        }
+
+        resolve({
+          name: file.name,
+          mimeType: file.type,
+          base64
+        });
+      };
+
+      reader.onerror = () => {
+        reject(new Error(`Failed to read file: ${file.name}`));
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+
   private clearForm(): void {
     this.form.reset({
       fullName: '',
@@ -346,6 +459,9 @@ export class CategoryPageComponent {
       this.answersGroup.get(key)?.markAsPristine();
       this.answersGroup.get(key)?.markAsUntouched();
     });
+
+    this.selectedFiles = [];
+    this.fileUploadError = '';
 
     this.form.markAsPristine();
     this.form.markAsUntouched();

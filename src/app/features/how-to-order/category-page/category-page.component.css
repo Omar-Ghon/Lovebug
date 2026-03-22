@@ -314,6 +314,47 @@
 .order-category-page-body .order-category-page-content .category-page-layout .category-page-info .category-form .field-error-text {
   display: inline-block;
 }
+.order-category-page-body .order-category-page-content .category-page-layout .category-page-info .form-helper-text {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #452F21;
+  opacity: 0.8;
+}
+.order-category-page-body .order-category-page-content .category-page-layout .category-page-info .selected-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+.order-category-page-body .order-category-page-content .category-page-layout .category-page-info .selected-file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(69, 47, 33, 0.15);
+  border-radius: 0.9rem;
+  background: rgba(255, 248, 189, 0.55);
+}
+.order-category-page-body .order-category-page-content .category-page-layout .category-page-info .selected-file-name {
+  font-size: 0.95rem;
+  color: #452F21;
+  word-break: break-word;
+}
+.order-category-page-body .order-category-page-content .category-page-layout .category-page-info .remove-file-button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  background: #C53E3E;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+.order-category-page-body .order-category-page-content .category-page-layout .category-page-info .remove-file-button:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
 .order-category-page-body .order-category-page-content .loading-state,
 .order-category-page-body .order-category-page-content .not-found-state {
   max-width: 760px;

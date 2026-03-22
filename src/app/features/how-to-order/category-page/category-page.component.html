@@ -50,19 +50,6 @@
               </div>
 
               <div class="form-field">
-                <label class="form-label" for="instagramUsername">
-                  Instagram Username
-                </label>
-                <input
-                  class="form-input"
-                  id="instagramUsername"
-                  type="text"
-                  formControlName="instagramUsername"
-                  placeholder="@username"
-                />
-              </div>
-
-              <div class="form-field">
                 <label class="form-label" for="emailAddress">
                   Email Address <span class="required-indicator">*</span>
                 </label>
@@ -81,6 +68,19 @@
                   type="email"
                   formControlName="emailAddress"
                   placeholder="you@example.com"
+                />
+              </div>
+
+              <div class="form-field">
+                <label class="form-label" for="instagramUsername">
+                  Instagram Username
+                </label>
+                <input
+                  class="form-input"
+                  id="instagramUsername"
+                  type="text"
+                  formControlName="instagramUsername"
+                  placeholder="@username"
                 />
               </div>
 
@@ -188,15 +188,49 @@
               </div>
 
               <div class="form-field">
-                <label class="form-label" for="referenceImages">
-                  Reference images (paste links for now)
+                <label class="form-label" for="referenceImagesUpload">
+                  Reference images
                 </label>
-                <textarea
-                  class="form-textarea"
-                  id="referenceImages"
-                  formControlName="referenceImages"
-                  placeholder="Paste Pinterest, Instagram, Drive, or other links"
-                ></textarea>
+
+                <input
+                  class="form-input"
+                  id="referenceImagesUpload"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  (change)="onReferenceImagesSelected($event)"
+                />
+
+                <p class="form-helper-text">
+                  Optional. Upload up to 5 images, max 5 MB each.
+                </p>
+
+                @if (fileUploadError) {
+                  <div class="field-error" role="alert" aria-live="polite">
+                    <span class="field-error-icon" aria-hidden="true">
+                      <img src="assets/icons/warning-icon.png" class="field-error-img" alt="Error icon">
+                    </span>
+                    <span class="field-error-text">{{ fileUploadError }}</span>
+                  </div>
+                }
+
+                @if (selectedFiles.length > 0) {
+                  <div class="selected-files-list">
+                    @for (file of selectedFiles; track file.name + file.size + file.lastModified) {
+                      <div class="selected-file-item">
+                        <span class="selected-file-name">{{ file.name }}</span>
+
+                        <button
+                          type="button"
+                          class="remove-file-button"
+                          (click)="removeSelectedFile(file)"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    }
+                  </div>
+                }
               </div>
 
               <div class="form-field">

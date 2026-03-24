@@ -46,40 +46,41 @@
             font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
           }
 
-          .social-media-links {
+        .social-media-links {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 0.5rem 0.5rem;
+          margin-top: 2rem;
+          font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+
+          .social-media {
             display: flex;
-            justify-content: space-around;
-            align-content: center;
-            gap: 0.5rem;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+            text-decoration: none;
+            color: $dark-coffee;
+            min-width: 0;
 
-            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-            margin-top: 2rem;
-            
-            .social-media {
-              display: flex;
-              align-items: center;
-              gap: 0.1rem;
-              text-decoration: none;
-              color: $dark-coffee;
-
-              img {
-                height: 2rem;
-                width: 2rem;
-              }
-
-              .social-media-text {
-                font-size: 1rem;
-                font-weight: 700;
-                text-decoration: none;
-              }
-
-              &:hover {
-                color: $red;
-              }
-
+            img {
+              height: 2rem;
+              width: 2rem;
+              flex-shrink: 0;
             }
-            
+
+            .social-media-text {
+              font-size: 1rem;
+              font-weight: 700;
+              text-decoration: none;
+              margin: 0;
+              overflow-wrap: anywhere;
+            }
+
+            &:hover {
+              color: $red;
+            }
           }
+        }
         }
       }
   }
@@ -112,18 +113,21 @@
 
           .about-me-paragraph {
             font-size: 1.5rem;
-            max-width: 50vw;
+            max-width: 65vw;
             font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
             overflow-wrap: break-word;
             word-break: normal;
           }
 
           .social-media-links {
-            display: flex;
-            justify-content: space-around;
-            
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem 0.75rem;
+            justify-content: center;
+
             .social-media {
-              gap: 0.25rem;
+              justify-content: center;
+              gap: 0.4rem;
 
               img {
                 height: 2.5rem;
@@ -134,7 +138,6 @@
                 font-size: 1.1rem;
               }
             }
-            
           }
         }
 

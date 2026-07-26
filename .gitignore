@@ -40,3 +40,10 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Local reference copies of the Apps Script backend (source of truth is the Apps Script editor)
+app-script.txt
+claude-app-script.txt
+
+# Local Google Sheet setup notes, not deployed code
+google-sheets.txt

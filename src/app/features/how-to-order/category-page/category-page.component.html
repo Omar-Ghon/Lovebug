@@ -340,9 +340,72 @@
                         }
                       </select>
                     }
+
+                    @case ('color-list') {
+                      <div class="color-list-field" [formArrayName]="question.key">
+                        @for (colorControl of getColorsArray(question.key).controls; track $index) {
+                          <div class="color-list-row">
+                            <input
+                              class="form-input"
+                              [class.is-invalid]="hasAnswerError(question.key)"
+                              type="text"
+                              [formControlName]="$index"
+                              [placeholder]="'Color ' + ($index + 1)"
+                            />
+
+                            @if (getColorsArray(question.key).length > 1) {
+                              <button
+                                type="button"
+                                class="remove-color-button"
+                                (click)="removeColor(question, $index)"
+                              >
+                                Remove
+                              </button>
+                            }
+                          </div>
+                        }
+
+                        @if (getColorsArray(question.key).length < getEffectiveMaxColors(question)) {
+                          <button
+                            type="button"
+                            class="add-color-button"
+                            (click)="addColor(question)"
+                          >
+                            + Add Color
+                          </button>
+                        } @else {
+                          <p class="form-helper-text">
+                            Maximum of {{ getEffectiveMaxColors(question) }} colors reached.
+                          </p>
+                        }
+                      </div>
+                    }
                   }
                 </div>
               }
+            </div>
+
+            <div class="price-summary" aria-live="polite">
+              <h2 class="price-summary-title">Estimated Price</h2>
+
+              <ul class="price-summary-list">
+                @for (item of pricing().items; track item.label) {
+                  <li class="price-summary-row">
+                    <span class="price-summary-label">{{ item.label }}</span>
+                    <span class="price-summary-amount">{{ item.amount | currency }}</span>
+                  </li>
+                }
+              </ul>
+
+              <div class="price-summary-total">
+                <span>Estimated Total</span>
+                <span>{{ pricing().total | currency }}</span>
+              </div>
+
+              <p class="price-summary-note">
+                This is an estimate. Lovebug confirms your final price after reviewing your
+                order request.
+              </p>
             </div>
 
             @if (submitError) {
@@ -402,6 +465,22 @@
             <p class="modal-text">
               Please confirm that all details are correct before sending your order request.
             </p>
+
+            <div class="price-summary price-summary-compact">
+              <ul class="price-summary-list">
+                @for (item of pricing().items; track item.label) {
+                  <li class="price-summary-row">
+                    <span class="price-summary-label">{{ item.label }}</span>
+                    <span class="price-summary-amount">{{ item.amount | currency }}</span>
+                  </li>
+                }
+              </ul>
+
+              <div class="price-summary-total">
+                <span>Estimated Total</span>
+                <span>{{ pricing().total | currency }}</span>
+              </div>
+            </div>
 
             <div class="modal-actions">
               <button

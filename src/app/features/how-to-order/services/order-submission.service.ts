@@ -18,7 +18,7 @@ export interface LovebugGeneralOrderInfo {
 }
 
 export interface LovebugOrderAnswers {
-  [key: string]: string | number | boolean | null;
+  [key: string]: string | number | boolean | null | string[];
 }
 
 export interface LovebugUploadedFile {

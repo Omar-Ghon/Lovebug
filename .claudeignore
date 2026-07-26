@@ -1,0 +1,17 @@
+# Dependencies & build output
+node_modules/
+dist/
+.angular/
+out-tsc/
+
+# Lockfiles
+*.lock
+package-lock.json
+
+# Compiled style artifacts (source is the .scss next to them)
+*.css.map
+src/**/*.css
+
+# System
+.DS_Store
+Thumbs.db

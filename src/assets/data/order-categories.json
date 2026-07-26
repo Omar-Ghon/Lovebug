@@ -1,22 +1,350 @@
 {
   "success": true,
-  "version": "fallback-v1",
-  "lastUpdated": "2026-03-08T00:00:00.000Z",
+  "version": "FXjVYsbIydVl0gMIbKlIqA==",
+  "lastUpdated": "2026-05-03T02:29:48.156Z",
   "data": [
+    {
+      "slug": "book-covers",
+      "title": "Book Covers",
+      "image": "https://res.cloudinary.com/duavhapsu/image/upload/v1774289137/5e2265fa93a0b40e763f728a66f0e290_hj3gon.jpg",
+      "description": "Flat fee: $30 + Add-ons",
+      "questions": [
+        {
+          "key": "size",
+          "label": "Book Size",
+          "type": "text",
+          "required": true,
+          "placeholder": "Dimensions or book type"
+        },
+        {
+          "key": "color",
+          "label": "Color",
+          "type": "text",
+          "required": true,
+          "placeholder": "1–3 colors"
+        },
+        {
+          "key": "style",
+          "label": "Style",
+          "type": "text",
+          "required": false,
+          "placeholder": "plain, striped, granny square"
+        },
+        {
+          "key": "closure",
+          "label": "Closure",
+          "type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "None",
+              "value": "none"
+            },
+            {
+              "label": "Button",
+              "value": "button"
+            },
+            {
+              "label": "Tie",
+              "value": "tie"
+            }
+          ]
+        },
+        {
+          "key": "notes",
+          "label": "Extra Notes",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "Any extra details?"
+        }
+      ]
+    },
     {
       "slug": "beanies",
       "title": "Beanies",
-      "image": "assets/images/beanies.png",
-      "description": "Warm handmade beanies.",
+      "image": "https://res.cloudinary.com/duavhapsu/image/upload/v1774386073/5a8e971a087f23d1b2c3c4395cd084e8_1_tgpyns.jpg",
+      "description": "Flat fee: $30 + Add-ons",
       "questions": [
         {
           "key": "headSize",
           "label": "Head Size",
           "type": "text",
           "required": true,
-          "placeholder": "Enter head size"
+          "placeholder": "In cm or child/teen/adult"
+        },
+        {
+          "key": "color",
+          "label": "Color",
+          "type": "text",
+          "required": true,
+          "placeholder": "eg. red"
+        },
+        {
+          "key": "style",
+          "label": "Style",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Classic",
+              "value": "classic"
+            },
+            {
+              "label": "Folded Brim",
+              "value": "folded-brim"
+            },
+            {
+              "label": "Slouchy",
+              "value": "slouchy"
+            }
+          ]
+        },
+        {
+          "key": "pomPom",
+          "label": "Pom-Pom",
+          "type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Yes",
+              "value": "yes"
+            },
+            {
+              "label": "No",
+              "value": "no"
+            }
+          ]
+        },
+        {
+          "key": "notes",
+          "label": "Extra Notes",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "Any extra details?"
         }
       ]
+    },
+    {
+      "slug": "mini-card-holder/wallet",
+      "title": "Card Holder/Wallet",
+      "image": "https://res.cloudinary.com/duavhapsu/image/upload/v1774385194/c125a20d76300a2e549194e53023d82c_jaozrv.jpg",
+      "description": "Flat fee: $15 +Add ons",
+      "questions": []
+    },
+    {
+      "slug": "coasters",
+      "title": "Coasters",
+      "image": "https://res.cloudinary.com/duavhapsu/image/upload/v1774385195/aef13ca42e02d76724a99291de6ec277_qkqtrr.jpg",
+      "description": "Flat Fee: $4/coaster +Add ons",
+      "questions": [
+        {
+          "key": "quantity",
+          "label": "Quantity",
+          "type": "text",
+          "required": true,
+          "placeholder": "How many?"
+        },
+        {
+          "key": "color",
+          "label": "Color",
+          "type": "text",
+          "required": true,
+          "placeholder": "Preferred colors"
+        },
+        {
+          "key": "shape",
+          "label": "Shape",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Round",
+              "value": "round"
+            },
+            {
+              "label": "Square",
+              "value": "square"
+            },
+            {
+              "label": "Flower",
+              "value": "flower"
+            }
+          ]
+        },
+        {
+          "key": "style",
+          "label": "Style",
+          "type": "text",
+          "required": false,
+          "placeholder": "Simple, textured, decorative"
+        },
+        {
+          "key": "notes",
+          "label": "Extra Notes",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "Any extra details?"
+        }
+      ]
+    },
+    {
+      "slug": "mini-figures",
+      "title": "Mini Figures/ Plush Toy",
+      "image": "https://res.cloudinary.com/duavhapsu/image/upload/v1774385194/bd6c7aba5c6c946d6bee4a4939ffa5f8_xpmmrr.jpg",
+      "description": "Flat Fee: $15 - $50 (based on size + complexity)",
+      "questions": [
+        {
+          "key": "design",
+          "label": "Design",
+          "type": "text",
+          "required": true,
+          "placeholder": "Character, animal, object"
+        },
+        {
+          "key": "size",
+          "label": "Size",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Small",
+              "value": "small"
+            },
+            {
+              "label": "Medium",
+              "value": "medium"
+            },
+            {
+              "label": "Large",
+              "value": "large"
+            }
+          ]
+        },
+        {
+          "key": "color",
+          "label": "Color",
+          "type": "text",
+          "required": true,
+          "placeholder": "Colors/details"
+        },
+        {
+          "key": "detailLevel",
+          "label": "Detail Level",
+          "type": "select",
+          "required": false,
+          "options": [
+            {
+              "label": "Simple",
+              "value": "simple"
+            },
+            {
+              "label": "Detailed",
+              "value": "detailed"
+            }
+          ]
+        },
+        {
+          "key": "notes",
+          "label": "Extra Notes",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "Any extra details?"
+        }
+      ]
+    },
+    {
+      "slug": "keychains/bag-charms",
+      "title": "Keychains/ Bag Charms",
+      "image": "https://res.cloudinary.com/duavhapsu/image/upload/v1774385193/3bb59da4eb534447bd16ef5a15ccf3c2_yrxvvu.jpg",
+      "description": "Flat Fee: $4 - $20 (based on size + complexity)",
+      "questions": [
+        {
+          "key": "design",
+          "label": "Design",
+          "type": "text",
+          "required": true,
+          "placeholder": "Initial, heart, etc."
+        },
+        {
+          "key": "color",
+          "label": "Color",
+          "type": "text",
+          "required": true,
+          "placeholder": "Preferred colors"
+        },
+        {
+          "key": "size",
+          "label": "Size",
+          "type": "text",
+          "required": false,
+          "placeholder": "Small/medium or cm"
+        },
+        {
+          "key": "addOns",
+          "label": "Add-ons",
+          "type": "text",
+          "required": false,
+          "placeholder": "Beads, charms, etc."
+        },
+        {
+          "key": "type",
+          "label": "Type",
+          "type": "select",
+          "required": true,
+          "options": [
+            {
+              "label": "Keychain",
+              "value": "keychain"
+            },
+            {
+              "label": "Bag Charm",
+              "value": "bag-charm"
+            }
+          ]
+        },
+        {
+          "key": "notes",
+          "label": "Extra Notes",
+          "type": "textarea",
+          "required": false,
+          "placeholder": "Any extra details?"
+        }
+      ]
+    },
+    {
+      "slug": "headbands/bandanas",
+      "title": "Headbands/ Bandanas",
+      "image": "https://res.cloudinary.com/duavhapsu/image/upload/v1774385194/93d1b380f80e0f51aa5d639fa9768014_nv1fpe.jpg",
+      "description": "Flat Fee: $10 - $20 (based on size + complexity)",
+      "questions": []
+    },
+    {
+      "slug": "bottle-cover/boot",
+      "title": "Bottle/Cup Boot",
+      "image": "https://res.cloudinary.com/duavhapsu/image/upload/v1774385194/IMG_7269_vtqlwt.jpg",
+      "description": "Flat Fee: $15- $30 (based on size + complexity)",
+      "questions": []
+    },
+    {
+      "slug": "jewelry-holder/organizer",
+      "title": "Jewelry Holder/ Organizer",
+      "image": "https://res.cloudinary.com/duavhapsu/image/upload/v1774385195/IMG_6795_g8rsdm.jpg",
+      "description": "Flat Fee: $10- $30 (based on size + complexity)",
+      "questions": []
+    },
+    {
+      "slug": "mini-tapestries",
+      "title": "Mini Tapestries",
+      "image": "https://res.cloudinary.com/duavhapsu/image/upload/v1774385197/IMG_0619_dapymq.jpg",
+      "description": "Flat Fee: $15- $50 (based on size + complexity)",
+      "questions": []
+    },
+    {
+      "slug": "other-custom-items-by-request",
+      "title": "Other Custom Items By Request",
+      "image": "https://res.cloudinary.com/duavhapsu/image/upload/v1774385664/a1a347882e9447303082185594f98528_lckvsb.jpg",
+      "description": "Contact @lovebugcollective_ on instagram or lovebugcollective0@gmail.com to discuss pricing",
+      "questions": []
     }
   ]
 }

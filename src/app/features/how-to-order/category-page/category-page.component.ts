@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
+  FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -15,12 +16,13 @@ import {
 import { map } from 'rxjs/operators';
 
 import { HowToOrderService } from '../services/how-to-order.service';
-import { OrderCategory } from '../models/order-categories.model';
+import { COLOR_LIST_HARD_CAP, OrderCategory, OrderQuestion } from '../models/order-categories.model';
 import {
   LovebugOrderSubmissionPayload,
   LovebugUploadedFile,
   OrderSubmissionService
 } from '../services/order-submission.service';
+import { OrderPricingService, PricingBreakdown } from '../services/order-pricing.service';
 
 type ActiveModal = 'confirm' | 'success' | null;
 
@@ -36,6 +38,7 @@ export class CategoryPageComponent {
   private readonly howToOrderService = inject(HowToOrderService);
   private readonly fb = inject(FormBuilder);
   private readonly orderSubmissionService = inject(OrderSubmissionService);
+  private readonly orderPricingService = inject(OrderPricingService);
 
   protected confirmationEmailSent = false;
   protected readonly todayDate = new Date().toISOString().split('T')[0];
@@ -91,6 +94,15 @@ export class CategoryPageComponent {
     answers: this.fb.group({})
   });
 
+  private readonly answersValue = toSignal(
+    this.form.get('answers')!.valueChanges,
+    { initialValue: this.form.get('answers')!.value as Record<string, unknown> }
+  );
+
+  protected readonly pricing = computed<PricingBreakdown>(() =>
+    this.orderPricingService.calculate(this.category(), this.answersValue())
+  );
+
   constructor() {
     effect(() => {
       const category = this.category();
@@ -105,6 +117,15 @@ export class CategoryPageComponent {
       }
 
       category.questions.forEach((question) => {
+        if (question.type === 'color-list') {
+          const colorsArray = this.fb.array(
+            [this.fb.control('')],
+            question.required ? [this.minFilledEntriesValidator(1)] : []
+          );
+          answersGroup.addControl(question.key, colorsArray);
+          return;
+        }
+
         const validators = question.required ? [Validators.required] : [];
         answersGroup.addControl(
           question.key,
@@ -112,6 +133,17 @@ export class CategoryPageComponent {
         );
       });
     });
+  }
+
+  private minFilledEntriesValidator(min: number): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const arr = control as FormArray;
+      const filled = arr.controls.filter(
+        (c) => String(c.value ?? '').trim().length > 0
+      ).length;
+
+      return filled >= min ? null : { minFilled: true };
+    };
   }
 
   private normalizeDate(date: Date): Date {
@@ -176,6 +208,39 @@ export class CategoryPageComponent {
 
   protected get answersGroup(): FormGroup {
     return this.form.get('answers') as FormGroup;
+  }
+
+  protected getColorsArray(questionKey: string): FormArray {
+    return this.answersGroup.get(questionKey) as FormArray;
+  }
+
+  protected getEffectiveMaxColors(question: OrderQuestion): number {
+    const configuredMax =
+      typeof question.colorMaxCount === 'number' && question.colorMaxCount > 0
+        ? question.colorMaxCount
+        : 1;
+
+    return Math.max(1, Math.min(configuredMax, COLOR_LIST_HARD_CAP));
+  }
+
+  protected addColor(question: OrderQuestion): void {
+    const colorsArray = this.getColorsArray(question.key);
+
+    if (colorsArray.length >= this.getEffectiveMaxColors(question)) {
+      return;
+    }
+
+    colorsArray.push(this.fb.control(''));
+  }
+
+  protected removeColor(question: OrderQuestion, index: number): void {
+    const colorsArray = this.getColorsArray(question.key);
+
+    if (colorsArray.length <= 1) {
+      return;
+    }
+
+    colorsArray.removeAt(index);
   }
 
   protected onSubmit(): void {
@@ -312,7 +377,7 @@ export class CategoryPageComponent {
         allergies: raw.allergies ?? '',
         agreementYes: raw.agreementYes ?? false
       },
-      answers: (raw.answers ?? {}) as Record<string, string | number | boolean | null>,
+      answers: (raw.answers ?? {}) as Record<string, string | number | boolean | null | string[]>,
       files: uploadedFiles
     };
 
@@ -402,6 +467,10 @@ export class CategoryPageComponent {
       return 'Please fill in this required field.';
     }
 
+    if (control.hasError('minFilled')) {
+      return 'Please enter at least one color.';
+    }
+
     return 'Please check this field.';
   }
 
@@ -455,9 +524,19 @@ export class CategoryPageComponent {
     });
 
     Object.keys(this.answersGroup.controls).forEach((key) => {
-      this.answersGroup.get(key)?.setValue('');
-      this.answersGroup.get(key)?.markAsPristine();
-      this.answersGroup.get(key)?.markAsUntouched();
+      const control = this.answersGroup.get(key);
+
+      if (control instanceof FormArray) {
+        while (control.length > 1) {
+          control.removeAt(control.length - 1);
+        }
+        control.at(0)?.setValue('');
+      } else {
+        control?.setValue('');
+      }
+
+      control?.markAsPristine();
+      control?.markAsUntouched();
     });
 
     this.selectedFiles = [];

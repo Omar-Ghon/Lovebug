@@ -7,10 +7,12 @@ export interface LovebugGeneralOrderInfo {
   fullName: string;
   instagramUsername: string;
   emailAddress: string;
+  isPickup: boolean;
+  isDelivery: boolean;
   shippingAddress: string;
   isGift: boolean | null;
   preferredCompletionDate: string;
-  isRushOrder: boolean | null;
+  paymentMethod: 'etransfer' | 'cash';
   budgetRange: string;
   referenceImages: string;
   allergies: string;
@@ -18,7 +20,7 @@ export interface LovebugGeneralOrderInfo {
 }
 
 export interface LovebugOrderAnswers {
-  [key: string]: string | number | boolean | null | string[];
+  [key: string]: string | number | boolean | null | string[] | { value: number | null; unit: 'cm' | 'in' };
 }
 
 export interface LovebugUploadedFile {

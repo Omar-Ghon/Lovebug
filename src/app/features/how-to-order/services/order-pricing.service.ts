@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { COLOR_LIST_HARD_CAP, OrderCategory } from '../models/order-categories.model';
+import { CM_PER_INCH, COLOR_LIST_HARD_CAP, MeasurementAnswer, OrderCategory } from '../models/order-categories.model';
 
 export interface PricingLineItem {
   label: string;
@@ -63,6 +63,37 @@ export class OrderPricingService {
             amount
           });
         }
+
+        return;
+      }
+
+      if (question.type === 'measurement') {
+        const rawValue = safeAnswers[question.key] as MeasurementAnswer | undefined;
+        const breakpoints = question.breakpoints ?? [];
+
+        if (!rawValue || !breakpoints.length) {
+          return;
+        }
+
+        const numericValue = typeof rawValue.value === 'number' ? rawValue.value : NaN;
+
+        if (!Number.isFinite(numericValue) || numericValue <= 0) {
+          return;
+        }
+
+        const unit = rawValue.unit === 'in' ? 'in' : 'cm';
+        const valueCm = unit === 'in' ? numericValue * CM_PER_INCH : numericValue;
+        const matchedBreakpoint = breakpoints.find((bp) => valueCm <= bp.upToCm);
+        const amount = this.toAmount(matchedBreakpoint?.price);
+
+        if (!matchedBreakpoint || amount <= 0) {
+          return;
+        }
+
+        items.push({
+          label: `${question.label}: ${numericValue} ${unit}`,
+          amount
+        });
 
         return;
       }

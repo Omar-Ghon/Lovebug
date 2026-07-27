@@ -32,10 +32,12 @@ lovebug/
   scripts/sync-lovebug-content.mjs         # fetches Sheet content at build time
   app-script.txt                          # reference copy of the LIVE Apps Script backend (see below)
   claude-app-script.txt                   # staging copy: not-yet-pasted-in Apps Script changes
+  google-sheets.txt                       # local notes: what to set up in the Google Sheet (see Pricing)
 ```
 
-`app-script.txt` and `claude-app-script.txt` are **gitignored** — they're local reference/staging
-copies, not deployed code, and must never end up in the GitHub repo or a Vercel build.
+`app-script.txt`, `claude-app-script.txt`, and `google-sheets.txt` are **gitignored** — they're
+local reference/staging copies, not deployed code, and must never end up in the GitHub repo or a
+Vercel build.
 
 ## Commands
 
@@ -132,24 +134,45 @@ Order pricing is Sheet-editable and computed as **base fee + sum of priced selec
 
 - **`Categories` sheet** — `basePrice` column (number, blank/invalid → `$0`). Flat fee for that
   product.
-- **`Questions` sheet** — no new column; `select`-type questions' existing `optionsJson` array
-  may carry a `price` per option (`{"label":"Striped","value":"striped","price":5}`, missing →
-  `$0`). Only `select` questions are priced; `text`/`textarea`/`number` never contribute.
-  Yes/No-style add-ons (e.g. "Large/Double Book") are modeled as a two-option `select` rather
-  than a dedicated boolean question type.
+- **`Questions` sheet** — `select`-type questions' existing `optionsJson` array may carry a
+  `price` per option (`{"label":"Striped","value":"striped","price":5}`, missing → `$0`).
+  `text`/`textarea`/`number` never contribute pricing. Yes/No-style add-ons (e.g. "Large/Double
+  Book") are modeled as a two-option `select` rather than a dedicated boolean question type.
+- **`color-list` question type** — a repeatable "Color 1 / + Add Color" text-box list (the
+  business owner explicitly rejected a HEX/swatch picker; yarn-color matching by name works
+  better for her customers). Priced by *count*, not by selection: three dedicated `Questions`
+  columns per category — `colorIncludedCount` (colors covered by the base price, blank → `1`),
+  `colorPricePerExtra` (blank → `$0`), `colorMaxCount` (blank → `colorIncludedCount`, i.e. no
+  upsell until configured). `optionsJson` is unused/blank on `color-list` rows. A hard cap of 20
+  boxes (`COLOR_LIST_HARD_CAP`, duplicated as a literal in both the Angular model and the Apps
+  Script since they can't share code) applies regardless of `colorMaxCount`, enforced both in the
+  UI and again server-side. See `google-sheets.txt` for the exact Sheet setup steps. The answer
+  value for this question type is `string[]` (every other question type is a scalar) — this
+  ripples through `OrderQuestion`, `LovebugOrderAnswers`, the reactive form (`FormArray` instead
+  of `FormControl` for this one key, built in `CategoryPageComponent`'s constructor `effect()`),
+  and the Apps Script's `sanitizeAnswers_`/`calculateOrderPrice_`/email formatting.
 - **Server is the sole source of truth.** `calculateOrderPrice_(category, answers)` in the Apps
   Script (`doPost`) looks up the category fresh from its own Script-Properties cache
   (`getCategoryFromCache_`) and re-derives the total from the submitted answer *values* — the
   client payload has no price field to trust or distrust in the first place, so DOM/DevTools
   tampering with the on-screen number has zero effect on what's actually recorded. The
   recalculated `{ total, items }` is written to the new `Orders` columns, included in the
-  confirmation email's "Price Summary" section, and returned in the `doPost` JSON response.
+  confirmation email's "Price Summary" section, and returned in the `doPost` JSON response. For
+  `color-list`, billable count is clamped to `colorMaxCount` server-side independent of the
+  20-box hard cap, so a tampered client can't inflate the price by submitting more colors than
+  the category allows.
 - **Frontend** (`OrderPricingService`, `features/how-to-order/services/order-pricing.service.ts`)
-  mirrors the same base-fee-plus-selected-options algorithm in TypeScript, purely for a live,
-  **display-only** itemized estimate as the customer fills out `CategoryPageComponent`'s form
-  (and again in the confirm modal) — never treated as authoritative.
-- Not yet built: deposit-percentage display, and a HEX color picker for color-choice questions
-  (both explicitly deferred).
+  mirrors the same algorithm (base fee + priced `select` options + counted `color-list` extras)
+  in TypeScript, purely for a live, **display-only** itemized estimate as the customer fills out
+  `CategoryPageComponent`'s form (and again in the confirm modal) — never treated as
+  authoritative. Formulas must stay in exact sync with `calculateOrderPrice_` — when changing
+  one, change the other the same way.
+- **Deployment status**: the base-fee + priced-`select` mechanism is live. The `color-list`
+  additions are currently staged in `claude-app-script.txt` only — confirm with the user whether
+  it's been pasted into the live Apps Script editor yet before assuming it's deployed; if not,
+  `app-script.txt` won't have `color-list` support and the Sheet won't have the three new columns
+  until both `google-sheets.txt`'s steps and the script paste happen.
+- Not yet built: deposit-percentage display (explicitly deferred).
 
 ## Routing
 
@@ -164,6 +187,10 @@ Defined in `src/app/app.routes.ts`, all nested under `MainviewComponent` (the la
   `.scss` is the source; the `.css`/map are build artifacts. (`.claudeignore` hides them.)
 - **Don't hand-edit `src/assets/data/order-categories.json`** — it's regenerated by the sync
   script. To change live content, edit the Google Sheet.
+- **`CategoryPageComponent`'s `answers` FormGroup mixes `FormControl`s and one `FormArray`**
+  (for `color-list` questions) — any code that walks `answersGroup.controls` generically (like
+  `clearForm()`) must check `instanceof FormArray` and reset it structurally (remove extra
+  controls, reset the first to `''`), not call `.setValue('')` on it directly.
 - Components are **standalone** (no NgModules); use `inject()` and signals, register providers in
   `app.config.ts`.
 - Styles use **SCSS**; component style budgets are tuned generously in `angular.json` (several

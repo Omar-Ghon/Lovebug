@@ -19,10 +19,6 @@
         <div class="category-page-info">
           <h1 class="category-page-title">{{ categoryItem.title }}</h1>
 
-          <p class="category-page-description">
-            {{ categoryItem.description }}
-          </p>
-
           <form class="category-form" [formGroup]="form" (ngSubmit)="onSubmit()">
             <div class="form-section">
               <h2 class="form-section-title">General Information</h2>
@@ -84,26 +80,60 @@
                 />
               </div>
 
-              <div class="form-field">
-                <label class="form-label" for="shippingAddress">
-                  Shipping Address <span class="required-indicator">*</span>
+              <div class="form-field checkbox-field">
+                <label class="form-label">
+                  Preferred method of receival <span class="required-indicator">*</span>
                 </label>
-                @if (hasControlError('shippingAddress')) {
+                @if (hasReceivalMethodError()) {
                   <div class="field-error" role="alert" aria-live="polite">
                     <span class="field-error-icon" aria-hidden="true">
                       <img src="assets/icons/warning-icon.png" class="field-error-img" alt="Error icon">
                     </span>
-                    <span class="field-error-text">{{ getControlErrorMessage('shippingAddress') }}</span>
+                    <span class="field-error-text">{{ getReceivalMethodErrorMessage() }}</span>
                   </div>
                 }
-                <textarea
-                  class="form-textarea"
-                  [class.is-invalid]="hasControlError('shippingAddress')"
-                  id="shippingAddress"
-                  formControlName="shippingAddress"
-                  placeholder="Enter your full shipping address"
-                ></textarea>
+                <label class="checkbox-label">
+                  <input
+                    class="checkbox-input"
+                    [class.is-invalid]="hasReceivalMethodError()"
+                    type="checkbox"
+                    formControlName="isPickup"
+                  />
+                  <span>Pickup</span>
+                </label>
+                <label class="checkbox-label">
+                  <input
+                    class="checkbox-input"
+                    [class.is-invalid]="hasReceivalMethodError()"
+                    type="checkbox"
+                    formControlName="isDelivery"
+                  />
+                  <span>Delivery</span>
+                </label>
               </div>
+
+              @if (isDeliverySignal()) {
+                <div class="form-field">
+                  <label class="form-label" for="shippingAddress">
+                    Shipping Address <span class="required-indicator">*</span>
+                  </label>
+                  @if (hasControlError('shippingAddress')) {
+                    <div class="field-error" role="alert" aria-live="polite">
+                      <span class="field-error-icon" aria-hidden="true">
+                        <img src="assets/icons/warning-icon.png" class="field-error-img" alt="Error icon">
+                      </span>
+                      <span class="field-error-text">{{ getControlErrorMessage('shippingAddress') }}</span>
+                    </div>
+                  }
+                  <textarea
+                    class="form-textarea"
+                    [class.is-invalid]="hasControlError('shippingAddress')"
+                    id="shippingAddress"
+                    formControlName="shippingAddress"
+                    placeholder="123 Maple Street, Apt 4B&#10;Springfield, IL 62704"
+                  ></textarea>
+                </div>
+              }
 
               <div class="form-field">
                 <label class="form-label">
@@ -145,33 +175,9 @@
                   [class.is-invalid]="hasControlError('preferredCompletionDate')"
                   id="preferredCompletionDate"
                   type="date"
-                  [min]="todayDate"
+                  [min]="minCompletionDate"
                   formControlName="preferredCompletionDate"
                 />
-              </div>
-
-              <div class="form-field">
-                <label class="form-label">
-                  Is this a priority/rush order? (Rush fees apply)
-                  <span class="required-indicator">*</span>
-                </label>
-                @if (hasControlError('isRushOrder')) {
-                  <div class="field-error" role="alert" aria-live="polite">
-                    <span class="field-error-icon" aria-hidden="true">
-                      <img src="assets/icons/warning-icon.png" class="field-error-img" alt="Error icon">
-                    </span>
-                    <span class="field-error-text">{{ getControlErrorMessage('isRushOrder') }}</span>
-                  </div>
-                }
-                <select
-                  class="form-select"
-                  [class.is-invalid]="hasControlError('isRushOrder')"
-                  formControlName="isRushOrder"
-                >
-                  <option [ngValue]="null" disabled>Select an option</option>
-                  <option [ngValue]="true">Yes</option>
-                  <option [ngValue]="false">No</option>
-                </select>
               </div>
 
               <div class="form-field">
@@ -380,6 +386,47 @@
                         }
                       </div>
                     }
+
+                    @case ('measurement') {
+                      <div class="measurement-field" [formGroupName]="question.key">
+                        <div class="measurement-input-row">
+                          <input
+                            class="form-input"
+                            [class.is-invalid]="hasAnswerError(question.key)"
+                            type="number"
+                            step="0.1"
+                            min="0"
+                            formControlName="value"
+                            [placeholder]="question.placeholder ?? 'e.g. 56'"
+                          />
+
+                          <div class="unit-toggle">
+                            <button
+                              type="button"
+                              class="unit-toggle-option"
+                              [class.is-active]="getMeasurementGroup(question.key).get('unit')?.value === 'cm'"
+                              (click)="setMeasurementUnit(question, 'cm')"
+                            >
+                              cm
+                            </button>
+                            <button
+                              type="button"
+                              class="unit-toggle-option"
+                              [class.is-active]="getMeasurementGroup(question.key).get('unit')?.value === 'in'"
+                              (click)="setMeasurementUnit(question, 'in')"
+                            >
+                              in
+                            </button>
+                          </div>
+                        </div>
+
+                        @if (isMeasurementOutOfRange(question)) {
+                          <p class="measurement-range-note">
+                            Double check this number is correct :)
+                          </p>
+                        }
+                      </div>
+                    }
                   }
                 </div>
               }
@@ -460,11 +507,8 @@
         @if (activeModal === 'confirm') {
           <div class="modal-content">
             <h2 class="modal-title" id="confirm-modal-title">
-              Are you sure?
+              Your Order
             </h2>
-            <p class="modal-text">
-              Please confirm that all details are correct before sending your order request.
-            </p>
 
             <div class="price-summary price-summary-compact">
               <ul class="price-summary-list">
@@ -482,23 +526,69 @@
               </div>
             </div>
 
+            <p class="modal-text">
+              This estimated price is subject to change; Lovebug will reach out if necessary.
+            </p>
+
+            <p class="modal-payment-title">
+              How would you like to pay? <span class="modal-required-indicator">*</span>
+            </p>
+
+            @if (paymentMethodError) {
+              <div class="modal-field-error" role="alert" aria-live="polite">
+                <span class="modal-field-error-icon" aria-hidden="true">
+                  <img src="assets/icons/warning-icon.png" class="modal-field-error-img" alt="Error icon">
+                </span>
+                <span>Please select a payment method.</span>
+              </div>
+            }
+
+            <div class="modal-payment-methods">
+              <label class="modal-payment-label">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  [checked]="paymentMethod === 'etransfer'"
+                  (change)="selectPaymentMethod('etransfer')"
+                />
+                <span>
+                  Interac e-Transfer to <strong>alishamarif&#64;gmail.com</strong> — 50% deposit
+                  up front, remaining 50% after you receive your item.
+                </span>
+              </label>
+              <label class="modal-payment-label">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  [checked]="paymentMethod === 'cash'"
+                  (change)="selectPaymentMethod('cash')"
+                />
+                <span>Cash</span>
+              </label>
+            </div>
+
+            <p class="modal-text">
+              For further inquiries, reach out on Instagram &#64;lovebugcollective_ or email
+              lovebugcollective0&#64;gmail.com.
+            </p>
+
             <div class="modal-actions">
+              <button
+                class="modal-button modal-button-primary"
+                type="button"
+                (click)="onConfirmYesClick()"
+                [disabled]="isSubmitting"
+              >
+                {{ isSubmitting ? 'Submitting...' : 'Confirm' }}
+              </button>
+
               <button
                 class="modal-button modal-button-secondary"
                 type="button"
                 (click)="closeModal()"
                 [disabled]="isSubmitting"
               >
-                No
-              </button>
-
-              <button
-                class="modal-button modal-button-primary"
-                type="button"
-                (click)="confirmSubmit()"
-                [disabled]="isSubmitting"
-              >
-                {{ isSubmitting ? 'Submitting...' : 'Yes' }}
+                Cancel
               </button>
             </div>
           </div>
@@ -514,6 +604,14 @@
               Your order ID is
               <span class="modal-order-id">{{ submittedOrderId }}</span>.
             </p>
+
+          @if (submittedPaymentMethod === 'etransfer') {
+            <p class="modal-text">
+              When sending your Interac e-Transfer, please include your order ID
+              (<span class="modal-order-id">{{ submittedOrderId }}</span>) in the payment
+              message.
+            </p>
+          }
 
           @if (confirmationEmailSent) {
             <p class="modal-text">

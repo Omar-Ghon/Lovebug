@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+body.modal-open {
+    overflow: hidden;
+}
+
 $lemon: #FFF8BD;
 $dark-coffee: #452F21;
 $red: #C53E3E;

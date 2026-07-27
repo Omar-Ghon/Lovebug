@@ -100,14 +100,6 @@
           text-wrap: balance;
         }
 
-        .category-page-description {
-          margin: 0;
-          max-width: 65ch;
-          font-size: 1.1rem;
-          line-height: 1.8;
-          color: rgba(255, 255, 255, 0.9);
-        }
-
         .category-form {
           display: flex;
           flex-direction: column;
@@ -274,6 +266,59 @@
               span {
                 display: inline-block;
               }
+            }
+          }
+
+          .measurement-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+
+            .measurement-input-row {
+              display: flex;
+              align-items: center;
+              gap: 0.75rem;
+              flex-wrap: wrap;
+
+              .form-input {
+                flex: 1 1 160px;
+              }
+            }
+
+            .unit-toggle {
+              display: flex;
+              gap: 0.5rem;
+            }
+
+            .unit-toggle-option {
+              display: flex;
+              align-items: center;
+              gap: 0.4rem;
+              padding: 0.6rem 0.9rem;
+              border-radius: 999px;
+              border: 1.5px solid rgba(255, 255, 255, 0.3);
+              background: transparent;
+              color: rgba(255, 255, 255, 0.9);
+              font: inherit;
+              font-weight: 700;
+              cursor: pointer;
+              transition:
+                background 0.2s ease,
+                border-color 0.2s ease,
+                color 0.2s ease;
+
+              &.is-active {
+                background: rgba($lemon, 0.16);
+                border-color: $lemon;
+                color: $lemon;
+              }
+            }
+
+            .measurement-range-note {
+              margin: 0;
+              font-size: 0.92rem;
+              font-weight: 700;
+              color: $lemon;
             }
           }
 
@@ -726,6 +771,68 @@
       background: rgba(255, 255, 255, 0.18);
     }
   }
+
+  .modal-payment-title {
+    margin: 1.35rem 0 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: white;
+  }
+
+  .modal-required-indicator {
+    color: rgba($red, 0.8);
+    font-weight: 800;
+    font-size: 1.3rem;
+  }
+
+  .modal-payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .modal-payment-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.94);
+    line-height: 1.5;
+    font-size: 1.05rem;
+
+    input[type="radio"] {
+      flex: 0 0 1.2rem;
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-top: 0.2rem;
+      accent-color: $lemon;
+      cursor: pointer;
+    }
+  }
+
+  .modal-field-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    margin-top: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.45;
+    color: #ffb3b3;
+  }
+
+  .modal-field-error-icon {
+    flex-shrink: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    transform: translateY(0.02rem);
+
+    .modal-field-error-img {
+      height: 1.5rem;
+      width: 2rem;
+    }
+  }
 }
 
 @media screen and (min-width: 768px) {
@@ -759,7 +866,8 @@
     }
 
     .modal-text {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
+      margin-top: 0.5rem;
     }
 
     .modal-actions {
@@ -815,10 +923,6 @@
 
           .category-page-title {
             font-size: 4rem;
-          }
-
-          .category-page-description {
-            font-size: 1.05rem;
           }
 
           .category-form {

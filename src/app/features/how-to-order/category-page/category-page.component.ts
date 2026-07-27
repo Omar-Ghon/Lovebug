@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, computed, effect, inject } from '@angular/core';
+import { Component, HostListener, OnDestroy, computed, effect, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -16,7 +16,7 @@ import {
 import { map } from 'rxjs/operators';
 
 import { HowToOrderService } from '../services/how-to-order.service';
-import { COLOR_LIST_HARD_CAP, OrderCategory, OrderQuestion } from '../models/order-categories.model';
+import { CM_PER_INCH, COLOR_LIST_HARD_CAP, OrderCategory, OrderQuestion } from '../models/order-categories.model';
 import {
   LovebugOrderSubmissionPayload,
   LovebugUploadedFile,
@@ -33,7 +33,7 @@ type ActiveModal = 'confirm' | 'success' | null;
   templateUrl: './category-page.component.html',
   styleUrl: './category-page.component.scss',
 })
-export class CategoryPageComponent {
+export class CategoryPageComponent implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly howToOrderService = inject(HowToOrderService);
   private readonly fb = inject(FormBuilder);
@@ -41,13 +41,17 @@ export class CategoryPageComponent {
   private readonly orderPricingService = inject(OrderPricingService);
 
   protected confirmationEmailSent = false;
-  protected readonly todayDate = new Date().toISOString().split('T')[0];
+  protected readonly minCompletionDate = this.computeMinCompletionDate();
 
   protected isSubmitting = false;
   protected submitError = '';
   protected submittedOrderId = '';
   protected submittedEmailAddress = '';
   protected activeModal: ActiveModal = null;
+
+  protected paymentMethod: 'etransfer' | 'cash' | null = null;
+  protected paymentMethodError = false;
+  protected submittedPaymentMethod: 'etransfer' | 'cash' | null = null;
 
   protected selectedFiles: File[] = [];
   protected fileUploadError = '';
@@ -80,23 +84,29 @@ export class CategoryPageComponent {
     fullName: ['', Validators.required],
     instagramUsername: [''],
     emailAddress: ['', [Validators.required, Validators.email]],
-    shippingAddress: ['', Validators.required],
+    isPickup: [false],
+    isDelivery: [false],
+    shippingAddress: [''],
     isGift: [null as boolean | null, Validators.required],
     preferredCompletionDate: [
       '',
-      [Validators.required, this.notPastDateValidator()]
+      [Validators.required, this.minLeadTimeValidator()]
     ],
-    isRushOrder: [null as boolean | null, Validators.required],
     budgetRange: [''],
     referenceImages: [''],
     allergies: [''],
     agreementYes: [false, Validators.requiredTrue],
     answers: this.fb.group({})
-  });
+  }, { validators: [this.receivalMethodValidator()] });
 
   private readonly answersValue = toSignal(
     this.form.get('answers')!.valueChanges,
     { initialValue: this.form.get('answers')!.value as Record<string, unknown> }
+  );
+
+  protected readonly isDeliverySignal = toSignal(
+    this.form.get('isDelivery')!.valueChanges,
+    { initialValue: this.form.get('isDelivery')!.value as boolean }
   );
 
   protected readonly pricing = computed<PricingBreakdown>(() =>
@@ -126,12 +136,37 @@ export class CategoryPageComponent {
           return;
         }
 
+        if (question.type === 'measurement') {
+          const measurementGroup = this.fb.group({
+            value: [
+              null as number | null,
+              question.required ? [Validators.required, Validators.min(0.1)] : [Validators.min(0.1)]
+            ],
+            unit: ['cm' as 'cm' | 'in', Validators.required]
+          });
+          answersGroup.addControl(question.key, measurementGroup);
+          return;
+        }
+
         const validators = question.required ? [Validators.required] : [];
         answersGroup.addControl(
           question.key,
           new FormControl('', validators)
         );
       });
+    });
+
+    effect(() => {
+      const isDelivery = this.isDeliverySignal();
+      const shippingAddressControl = this.form.get('shippingAddress')!;
+
+      if (isDelivery) {
+        shippingAddressControl.addValidators(Validators.required);
+      } else {
+        shippingAddressControl.removeValidators(Validators.required);
+      }
+
+      shippingAddressControl.updateValueAndValidity({ emitEvent: false });
     });
   }
 
@@ -152,7 +187,14 @@ export class CategoryPageComponent {
     return normalized;
   }
 
-  private notPastDateValidator(): ValidatorFn {
+  private computeMinCompletionDate(): string {
+    const date = new Date();
+    date.setDate(date.getDate() + 14);
+    date.setHours(0, 0, 0, 0);
+    return date.toISOString().split('T')[0];
+  }
+
+  private minLeadTimeValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
 
@@ -166,11 +208,29 @@ export class CategoryPageComponent {
         return { invalidDate: true };
       }
 
-      const today = this.normalizeDate(new Date());
+      const minDate = this.normalizeDate(new Date(this.minCompletionDate));
       const chosen = this.normalizeDate(selectedDate);
 
-      return chosen < today ? { pastDate: true } : null;
+      return chosen < minDate ? { tooSoon: true } : null;
     };
+  }
+
+  private receivalMethodValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const isPickup = control.get('isPickup')?.value;
+      const isDelivery = control.get('isDelivery')?.value;
+
+      return isPickup || isDelivery ? null : { receivalMethodRequired: true };
+    };
+  }
+
+  ngOnDestroy(): void {
+    document.body.classList.remove('modal-open');
+  }
+
+  private setActiveModal(modal: ActiveModal): void {
+    this.activeModal = modal;
+    document.body.classList.toggle('modal-open', modal !== null);
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -196,7 +256,7 @@ export class CategoryPageComponent {
       event.preventDefault();
 
       if (this.activeModal === 'confirm' && !this.isSubmitting) {
-        this.confirmSubmit();
+        this.onConfirmYesClick();
         return;
       }
 
@@ -243,6 +303,31 @@ export class CategoryPageComponent {
     colorsArray.removeAt(index);
   }
 
+  protected getMeasurementGroup(questionKey: string): FormGroup {
+    return this.answersGroup.get(questionKey) as FormGroup;
+  }
+
+  protected isMeasurementOutOfRange(question: OrderQuestion): boolean {
+    const group = this.getMeasurementGroup(question.key);
+    const rawValue = group.get('value')?.value;
+    const unit = group.get('unit')?.value as 'cm' | 'in';
+    const breakpoints = question.breakpoints ?? [];
+
+    if (typeof rawValue !== 'number' || !Number.isFinite(rawValue) || rawValue <= 0 || !breakpoints.length) {
+      return false;
+    }
+
+    const valueCm = unit === 'in' ? rawValue * CM_PER_INCH : rawValue;
+    const min = breakpoints[0].upToCm;
+    const max = breakpoints[breakpoints.length - 1].upToCm;
+
+    return valueCm < min || valueCm > max;
+  }
+
+  protected setMeasurementUnit(question: OrderQuestion, unit: 'cm' | 'in'): void {
+    this.getMeasurementGroup(question.key).get('unit')?.setValue(unit);
+  }
+
   protected onSubmit(): void {
     this.submitError = '';
 
@@ -252,7 +337,7 @@ export class CategoryPageComponent {
       return;
     }
 
-    this.activeModal = 'confirm';
+    this.setActiveModal('confirm');
   }
 
   protected closeModal(): void {
@@ -260,11 +345,25 @@ export class CategoryPageComponent {
       return;
     }
 
-    this.activeModal = null;
+    this.setActiveModal(null);
   }
 
   protected onBackdropClick(): void {
     this.closeModal();
+  }
+
+  protected selectPaymentMethod(method: 'etransfer' | 'cash'): void {
+    this.paymentMethod = method;
+    this.paymentMethodError = false;
+  }
+
+  protected onConfirmYesClick(): void {
+    if (!this.paymentMethod) {
+      this.paymentMethodError = true;
+      return;
+    }
+
+    this.confirmSubmit();
   }
 
   protected onReferenceImagesSelected(event: Event): void {
@@ -329,10 +428,11 @@ export class CategoryPageComponent {
     this.submitError = '';
     this.submittedOrderId = '';
     this.submittedEmailAddress = '';
+    this.submittedPaymentMethod = null;
     this.confirmationEmailSent = false;
 
     if (this.form.invalid) {
-      this.activeModal = null;
+      this.setActiveModal(null);
       this.form.markAllAsTouched();
       this.scrollToFirstInvalidField();
       return;
@@ -341,7 +441,7 @@ export class CategoryPageComponent {
     const categoryItem = this.category();
 
     if (!categoryItem) {
-      this.activeModal = null;
+      this.setActiveModal(null);
       this.submitError = 'Category not found.';
       return;
     }
@@ -356,7 +456,7 @@ export class CategoryPageComponent {
       );
     } catch (error) {
       console.error(error);
-      this.activeModal = null;
+      this.setActiveModal(null);
       this.submitError = 'Something went wrong while reading your images.';
       return;
     }
@@ -368,10 +468,12 @@ export class CategoryPageComponent {
         fullName: raw.fullName ?? '',
         instagramUsername: raw.instagramUsername ?? '',
         emailAddress: raw.emailAddress ?? '',
+        isPickup: raw.isPickup ?? false,
+        isDelivery: raw.isDelivery ?? false,
         shippingAddress: raw.shippingAddress ?? '',
         isGift: raw.isGift,
         preferredCompletionDate: raw.preferredCompletionDate ?? '',
-        isRushOrder: raw.isRushOrder,
+        paymentMethod: this.paymentMethod!,
         budgetRange: raw.budgetRange ?? '',
         referenceImages: raw.referenceImages ?? '',
         allergies: raw.allergies ?? '',
@@ -387,20 +489,21 @@ export class CategoryPageComponent {
       const response = await this.orderSubmissionService.submitOrder(payload);
 
       if (!response.success) {
-        this.activeModal = null;
+        this.setActiveModal(null);
         this.submitError = response.error || 'Failed to submit order.';
         return;
       }
 
       this.submittedOrderId = response.orderId ?? '';
       this.submittedEmailAddress = raw.emailAddress ?? '';
+      this.submittedPaymentMethod = this.paymentMethod;
       this.confirmationEmailSent = response.emailSent === true;
 
       this.clearForm();
-      this.activeModal = 'success';
+      this.setActiveModal('success');
     } catch (error) {
       console.error(error);
-      this.activeModal = null;
+      this.setActiveModal(null);
       this.submitError = 'Something went wrong while submitting your order.';
     } finally {
       this.isSubmitting = false;
@@ -419,6 +522,18 @@ export class CategoryPageComponent {
     }
 
     return control.hasError(errorName);
+  }
+
+  protected hasReceivalMethodError(): boolean {
+    const pickup = this.form.get('isPickup');
+    const delivery = this.form.get('isDelivery');
+    const touched = !!(pickup?.touched || delivery?.touched);
+
+    return touched && this.form.hasError('receivalMethodRequired');
+  }
+
+  protected getReceivalMethodErrorMessage(): string {
+    return 'Please select at least one method (Pickup or Delivery).';
   }
 
   protected hasAnswerError(questionKey: string): boolean {
@@ -445,8 +560,8 @@ export class CategoryPageComponent {
       return 'Please check this box before submitting.';
     }
 
-    if (control.hasError('pastDate')) {
-      return 'Please choose a date that is not in the past.';
+    if (control.hasError('tooSoon')) {
+      return 'Please choose a date at least 2 weeks from today.';
     }
 
     if (control.hasError('invalidDate')) {
@@ -460,6 +575,20 @@ export class CategoryPageComponent {
     const control = this.answersGroup.get(questionKey);
 
     if (!control || !control.touched) {
+      return '';
+    }
+
+    if (control instanceof FormGroup) {
+      const valueControl = control.get('value');
+
+      if (valueControl?.hasError('required')) {
+        return 'Please enter a measurement.';
+      }
+
+      if (valueControl?.hasError('min')) {
+        return 'Please enter a measurement greater than 0.';
+      }
+
       return '';
     }
 
@@ -513,10 +642,11 @@ export class CategoryPageComponent {
       fullName: '',
       instagramUsername: '',
       emailAddress: '',
+      isPickup: false,
+      isDelivery: false,
       shippingAddress: '',
       isGift: null,
       preferredCompletionDate: '',
-      isRushOrder: null,
       budgetRange: '',
       referenceImages: '',
       allergies: '',
@@ -531,6 +661,8 @@ export class CategoryPageComponent {
           control.removeAt(control.length - 1);
         }
         control.at(0)?.setValue('');
+      } else if (control instanceof FormGroup) {
+        control.reset({ value: null, unit: 'cm' });
       } else {
         control?.setValue('');
       }
@@ -541,6 +673,9 @@ export class CategoryPageComponent {
 
     this.selectedFiles = [];
     this.fileUploadError = '';
+
+    this.paymentMethod = null;
+    this.paymentMethodError = false;
 
     this.form.markAsPristine();
     this.form.markAsUntouched();

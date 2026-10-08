@@ -1,5 +1,18 @@
 <main class="portfolio-body">
     <section class="portfolio-content">
-        
+        <h1 class="portfolio-title">Portfolio</h1>
+        @for (row of rows(); track $index) {
+            <div class="portfolio-row">
+                @for (img of row.images; track img.src) {
+                    <figure class="portfolio-item" [style.flex-grow]="aspect(img)">
+                        <img [src]="img.src" [alt]="img.alt" [attr.width]="img.width" [attr.height]="img.height"
+                            loading="lazy" decoding="async">
+                    </figure>
+                }
+                @for (grow of row.fillers; track $index) {
+                    <div class="portfolio-item portfolio-filler" [style.flex-grow]="grow"></div>
+                }
+            </div>
+        }
     </section>
 </main>

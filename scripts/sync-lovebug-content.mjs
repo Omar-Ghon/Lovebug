@@ -49,7 +49,47 @@ async function main() {
   console.log(`Last updated: ${json.lastUpdated}`);
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+// The portfolio snapshot is best-effort: a problem here must never block order content deploys.
+async function syncPortfolio() {
+  const outputPath = path.resolve('src/assets/data/portfolio.json');
+
+  try {
+    const separator = APPS_SCRIPT_URL.includes('?') ? '&' : '?';
+    const response = await fetch(`${APPS_SCRIPT_URL}${separator}type=portfolio`, {
+      method: 'GET',
+      headers: { Accept: 'application/json' }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const json = await response.json();
+
+    if (!json?.success || !Array.isArray(json.data)) {
+      throw new Error(json?.error || 'Unexpected portfolio response.');
+    }
+
+    await fs.mkdir(path.dirname(outputPath), { recursive: true });
+    await fs.writeFile(
+      outputPath,
+      JSON.stringify(
+        { success: true, version: json.version, lastUpdated: json.lastUpdated, data: json.data },
+        null,
+        2
+      ),
+      'utf8'
+    );
+
+    console.log(`Lovebug portfolio synced (${json.data.length} photos) to ${outputPath}`);
+  } catch (error) {
+    console.warn(`Skipping portfolio sync, keeping existing snapshot: ${error.message || error}`);
+  }
+}
+
+main()
+  .then(syncPortfolio)
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });

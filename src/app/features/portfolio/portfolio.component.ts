@@ -1,13 +1,7 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
-interface PortfolioImage {
-  src: string;
-  alt: string;
-  width: number;
-  height: number;
-}
+import { PortfolioImage, PortfolioService } from './portfolio.service';
 
 interface PortfolioRow {
   images: PortfolioImage[];
@@ -15,17 +9,12 @@ interface PortfolioRow {
   fillers: number[];
 }
 
-// TEMPORARY placeholder data. Replace with the Cloudinary images (src + width/height)
-// served by the Apps Script JSON snapshot.
-const STOCK_IMAGES: PortfolioImage[] = [
-  { src: 'https://picsum.photos/id/1011/1200/800', alt: 'Stock photo 1', width: 1200, height: 800 },
-  { src: 'https://picsum.photos/id/1025/800/1000', alt: 'Stock photo 2', width: 800, height: 1000 },
-  { src: 'https://picsum.photos/id/1035/1000/1000', alt: 'Stock photo 3', width: 1000, height: 1000 },
-  { src: 'https://picsum.photos/id/1043/1400/800', alt: 'Stock photo 4', width: 1400, height: 800 },
-  { src: 'https://picsum.photos/id/1050/800/1200', alt: 'Stock photo 5', width: 800, height: 1200 },
-  { src: 'https://picsum.photos/id/1062/800/1100', alt: 'Stock photo 6', width: 800, height: 1100 },
-  { src: 'https://picsum.photos/id/1074/1200/900', alt: 'Stock photo 7', width: 1200, height: 900 },
+// Photos per row by minimum viewport width (px), widest first. Below all of them: MOBILE_IMAGES_PER_ROW.
+const ROW_BREAKPOINTS = [
+  { minWidth: 1024, imagesPerRow: 4 },
+  { minWidth: 640, imagesPerRow: 3 }
 ];
+const MOBILE_IMAGES_PER_ROW = 2;
 
 @Component({
   selector: 'app-portfolio',
@@ -34,14 +23,39 @@ const STOCK_IMAGES: PortfolioImage[] = [
   imports: [RouterModule, CommonModule]
 })
 export class PortfolioComponent {
-  /** How many images sit in each row. */
-  readonly imagesPerRow = 2;
+  /** How many images sit in each row (changes with screen width, see ROW_BREAKPOINTS). */
+  readonly imagesPerRow = signal(MOBILE_IMAGES_PER_ROW);
 
-  readonly images = signal<PortfolioImage[]>(STOCK_IMAGES);
+  private readonly portfolioService = inject(PortfolioService);
+  readonly images = this.portfolioService.images;
+
+  constructor() {
+    this.portfolioService.load();
+
+    if (typeof window === 'undefined' || !window.matchMedia) {
+      return;
+    }
+
+    const queries = ROW_BREAKPOINTS.map(bp => ({
+      list: window.matchMedia(`(min-width: ${bp.minWidth}px)`),
+      imagesPerRow: bp.imagesPerRow
+    }));
+
+    const update = () => {
+      const match = queries.find(q => q.list.matches);
+      this.imagesPerRow.set(match ? match.imagesPerRow : MOBILE_IMAGES_PER_ROW);
+    };
+
+    update();
+    queries.forEach(q => q.list.addEventListener('change', update));
+    inject(DestroyRef).onDestroy(() =>
+      queries.forEach(q => q.list.removeEventListener('change', update))
+    );
+  }
 
   readonly rows = computed<PortfolioRow[]>(() => {
     const all = this.images();
-    const perRow = Math.max(1, this.imagesPerRow);
+    const perRow = Math.max(1, this.imagesPerRow());
     const rows: PortfolioRow[] = [];
     for (let i = 0; i < all.length; i += perRow) {
       const images = all.slice(i, i + perRow);

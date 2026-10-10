@@ -21,42 +21,10 @@
       text-align: center;
 
       .how-to-order-title {
-        margin-bottom: 0.75rem;
         font-size: clamp(1.5rem, 4vw, 2.5rem);
         line-height: 1.05;
         font-weight: 800;
         color: $dark-coffee;
-      }
-
-      .how-to-order-subtitle {
-        max-width: 640px;
-        margin: 0 auto;
-        font-size: 1rem;
-        line-height: 1.6;
-        color: rgba($dark-coffee, 0.88);
-      }
-
-      .how-to-order-notice {
-        width: fit-content;
-        max-width: 100%;
-        margin: 1.25rem auto 0;
-        padding: 0.75rem 1.4rem;
-        border-radius: 1.5rem;
-        background: $pink;
-        color: $dark-coffee;
-        font-size: 1.25rem;
-        line-height: 1.4;
-        font-weight: 500;
-        box-shadow: 0 6px 18px rgba($dark-coffee, 0.08);
-
-        .how-to-order-notice-label {
-          font-weight: 800;
-        }
-
-        strong {
-          color: $red;
-          font-weight: 800;
-        }
       }
     }
 
@@ -83,24 +51,9 @@
 }
 
 @media screen and (min-width: 768px) {
-  .how-to-order-body {
-    .how-to-order-content {
-      .how-to-order-intro {
-        padding: 1.75rem 1rem 2rem;
-        margin-bottom: 3rem;
-
-        .how-to-order-subtitle {
-          font-size: 1rem;
-        }
-
-        .how-to-order-notice {
-          padding: 0.95rem 1.25rem;
-          font-size: 1.25rem;
-          font-weight: 600;
-          // border-radius: 999px;
-        }
-      }
-    }
+  .how-to-order-body .how-to-order-content .how-to-order-intro {
+    padding: 1.75rem 1rem 2rem;
+    margin-bottom: 3rem;
   }
 }
 
@@ -112,11 +65,9 @@
       .how-to-order-intro {
         margin-bottom: 3.5rem;
 
-        
         .how-to-order-title {
           font-size: 2rem;
         }
-
       }
 
       .category-grid {

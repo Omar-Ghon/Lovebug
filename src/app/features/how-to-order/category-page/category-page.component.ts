@@ -42,6 +42,7 @@ export class CategoryPageComponent implements OnDestroy {
 
   protected confirmationEmailSent = false;
   protected readonly minCompletionDate = this.computeMinCompletionDate();
+  protected readonly minCompletionDateLabel = this.formatMinCompletionDate(this.minCompletionDate);
 
   protected isSubmitting = false;
   protected submitError = '';
@@ -181,17 +182,26 @@ export class CategoryPageComponent implements OnDestroy {
     };
   }
 
-  private normalizeDate(date: Date): Date {
-    const normalized = new Date(date);
-    normalized.setHours(0, 0, 0, 0);
-    return normalized;
-  }
-
+  /** Earliest allowed completion date: 14 days from today, as a local YYYY-MM-DD string. */
   private computeMinCompletionDate(): string {
     const date = new Date();
     date.setDate(date.getDate() + 14);
-    date.setHours(0, 0, 0, 0);
-    return date.toISOString().split('T')[0];
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
+  private formatMinCompletionDate(isoDate: string): string {
+    const [year, month, day] = isoDate.split('-').map(Number);
+
+    return new Date(year, month - 1, day).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
   }
 
   private minLeadTimeValidator(): ValidatorFn {
@@ -202,16 +212,12 @@ export class CategoryPageComponent implements OnDestroy {
         return null;
       }
 
-      const selectedDate = new Date(value);
-
-      if (Number.isNaN(selectedDate.getTime())) {
+      // Date inputs yield YYYY-MM-DD, which compares correctly as plain text.
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || Number.isNaN(new Date(value).getTime())) {
         return { invalidDate: true };
       }
 
-      const minDate = this.normalizeDate(new Date(this.minCompletionDate));
-      const chosen = this.normalizeDate(selectedDate);
-
-      return chosen < minDate ? { tooSoon: true } : null;
+      return value < this.minCompletionDate ? { tooSoon: true } : null;
     };
   }
 
@@ -561,7 +567,7 @@ export class CategoryPageComponent implements OnDestroy {
     }
 
     if (control.hasError('tooSoon')) {
-      return 'Please choose a date at least 2 weeks from today.';
+      return 'Please choose a date at least 2 weeks from today (earliest: ' + this.minCompletionDateLabel + ').';
     }
 
     if (control.hasError('invalidDate')) {

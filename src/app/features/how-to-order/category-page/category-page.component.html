@@ -162,6 +162,7 @@
                 <label class="form-label" for="preferredCompletionDate">
                   Preferred completion date <span class="required-indicator">*</span>
                 </label>
+                <p class="form-hint">Earliest available date: <strong>{{ minCompletionDateLabel }}</strong></p>
                 @if (hasControlError('preferredCompletionDate')) {
                   <div class="field-error" role="alert" aria-live="polite">
                     <span class="field-error-icon" aria-hidden="true">
